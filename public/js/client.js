@@ -1,4 +1,5 @@
 /* global TrelloPowerUp */
+// import { equalize } from './equalize.js';
 
 var Promise = TrelloPowerUp.Promise;
 
@@ -29,6 +30,19 @@ var restApiCardButtonCallback = function(t) {
               })
            }
          }, {
+            text: 'Equalize dates',
+            callback: function(t) {
+              const customFieldModel = t.board('customFields');
+              const card = t.card('all');
+              return Promise.all([customFieldModel, card])
+                .then(function(customFieldModel, card) {
+                  console.log("Custom fields");
+                  console.log(customFieldModel);
+                  console.log("Card");
+                  console.log(card);
+                })
+            }
+          }, {
            // You can de-authorize the REST API client with a call to .clearToken()
            text: 'Unauthorize',
            callback: function(t) {
