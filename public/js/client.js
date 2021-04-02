@@ -68,4 +68,9 @@ TrelloPowerUp.initialize({
       text: 'Scheduler',
       callback: restApiCardButtonCallback,
     }];
-  },});
+  }
+}, {
+  // appKey: 'your_key_here',
+  appKey: '039f30a96f8f3e440addc095dd42f87d',
+  appName: 'Scheduler'
+});
