@@ -33,13 +33,13 @@ function getCustomFields(cardJson, items, fieldsModel) {
   for (let i = 0; i < fieldsModel.length; i ++) {
     const name = fieldsModel[i].name;
     const customFieldId = "idCustomField" + name;
-    json.[customFieldId] = fieldsModel[i].id;
+    // json.[customFieldId] = fieldsModel[i].id;
 
     for (let j = 0; j < (fieldsModel[i].options ? fieldsModel[i].options.length : 0); j ++) {
       const idValue = fieldsModel[i].options[j].id;
       const value = fieldsModel[i].options[j].value.text;
       const customFieldIdValue = "idCustomFieldValue" + name + value;
-      json.[customFieldIdValue] = idValue;
+      // json.[customFieldIdValue] = idValue;
     }
 
   }
