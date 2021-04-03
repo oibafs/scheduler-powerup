@@ -160,7 +160,7 @@ var restApiCardButtonCallback = function(t) {
           }, {
             text: 'SET',
             callback: function(t) {
-              t.set('member', 'private', 'newkey', 'Paunocu')
+              t.set('member', 'private', 'newkey', 'set newKey')
                 .then((result) => {
                   console.log(result);
                 });
@@ -168,7 +168,15 @@ var restApiCardButtonCallback = function(t) {
           }, {
             text: 'GET',
             callback: function(t) {
-              t.get('member', 'private', 'newkey', 'Fudeu')
+              t.get('member', 'private', 'newkey', 'no newKey')
+                .then((result) => {
+                  console.log(result);
+                });
+            }
+          }, {
+            text: 'GET token',
+            callback: function(t) {
+              t.get('member', 'private', 'token', 'no token')
                 .then((result) => {
                   console.log(result);
                 });
