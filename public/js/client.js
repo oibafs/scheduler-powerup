@@ -82,10 +82,13 @@ function equalize(t) {
             scope: {
               read: 'true',
               write: 'true' },
-            expiration: 'never',
-            success: authenticationSuccess(t),
-            error: authenticationFailure
-          });    
+            expiration: 'never' //,
+            // success: authenticationSuccess(t),
+            // error: authenticationFailure
+          })
+            .then((result) => {
+              console.log(result);
+            });    
       
         }
 
