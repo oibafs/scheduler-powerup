@@ -3,7 +3,7 @@ var Promise = TrelloPowerUp.Promise;
 
 var BLACK_ROCKET_ICON = 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Frocket-ship.png?1494946700421';
 
-function getCustomFields(cardJson, items, fieldsModel) {
+function getCustomFields(items, fieldsModel) {
   let json = {};
 
   // Process custom field items
@@ -85,7 +85,7 @@ var restApiCardButtonCallback = function(t) {
               const card = t.card('all');
               return Promise.all([customFieldModel, card])
                 .then(function(result) {
-                  equalize(result[1], result[0]);
+                  equalize(result[1], result[0].customFields);
                   t.closePopup();
                 })
             }
