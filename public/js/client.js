@@ -54,47 +54,41 @@ function getCustomFields(items, fieldsModel) {
 //   console.log(work);
 // }
 
-var authenticationSuccess = function() {
+var authenticationSuccess = function(t) {
   console.log('Successful authentication');
-  console.log(window.Trello);
-  return true;
+  t.set('member', 'private', 'token', window.Trello.token());
 };
 
 var authenticationFailure = function() {
   console.log('Failed authentication');
-  return false;
+  t.closePopup();
 };
 
-function authorize() {
-
-  return window.Trello.authorize({
-    type: 'popup',
-    name: 'Getting Started Application',
-    scope: {
-      read: 'true',
-      write: 'true' },
-    expiration: 'never',
-    success: authenticationSuccess,
-    error: authenticationFailure
-  });
-
-}
-
-function equalize(id) {
+function equalize(t) {
 
   if (!window.Trello.authorized()) {
 
-    window.Trello.authorize({
-      type: 'popup',
-      name: 'Getting Started Application',
-      persist: 'true',
-      scope: {
-        read: 'true',
-        write: 'true' },
-      expiration: 'never',
-      success: authenticationSuccess,
-      error: authenticationFailure
-    });    
+    t.get('member', 'private', 'token', null)
+      .then((token) => {
+
+        if (token) {
+          window.Trello.setToken(token);
+        } else {
+
+          window.Trello.authorize({
+            type: 'popup',
+            name: 'Scheduler',
+            scope: {
+              read: 'true',
+              write: 'true' },
+            expiration: 'never',
+            success: authenticationSuccess(t),
+            error: authenticationFailure
+          });    
+      
+        }
+
+      })
 
   } else {
     console.log('Already authorized!');
@@ -151,10 +145,13 @@ var restApiCardButtonCallback = function(t) {
               //     equalize(result[1], result[0].customFields);
               //     t.closePopup();
               //   })
-              const card = t.card('id')
-                .then(function(card) {
-                  equalize(card.id);
-                })
+
+              // const card = t.card('id')
+              //   .then(function(card) {
+              //     equalize(card.id);
+              //   })
+
+              equalize(t);
             }
           }, {
            // You can de-authorize the REST API client with a call to .clearToken()
