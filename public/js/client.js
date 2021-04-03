@@ -81,7 +81,8 @@ function authorize() {
 
 function equalize(id) {
 
-  const authorized = authorize()
+  const authorized = authorize();
+  console.log(authorized);
     // .then(() => {
 
     //   window.Trello.cards.get(id, {
