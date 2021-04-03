@@ -56,6 +56,7 @@ function getCustomFields(items, fieldsModel) {
 
 var authenticationSuccess = function() {
   console.log('Successful authentication');
+  console.log(window.Trello);
   return true;
 };
 
