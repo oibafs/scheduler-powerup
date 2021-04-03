@@ -82,18 +82,18 @@ function authorize() {
 function equalize(id) {
 
   const authorized = authorize()
-    .then(() => {
+    // .then(() => {
 
-      window.Trello.cards.get(id, {
-        customFields: 'true',
-        customFieldItems: 'true',
-        checklists: 'all'
-      })
-        .then((card) => {
-          console.log(JSON.stringify(card, null, 2))
-        })
+    //   window.Trello.cards.get(id, {
+    //     customFields: 'true',
+    //     customFieldItems: 'true',
+    //     checklists: 'all'
+    //   })
+    //     .then((card) => {
+    //       console.log(JSON.stringify(card, null, 2))
+    //     })
   
-    })
+    // })
 
   }
 
