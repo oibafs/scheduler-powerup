@@ -87,6 +87,7 @@ function equalize(id) {
     window.Trello.authorize({
       type: 'popup',
       name: 'Getting Started Application',
+      interactive: 'false',
       scope: {
         read: 'true',
         write: 'true' },
