@@ -97,8 +97,6 @@ function equalize(id) {
 
   }
 
-}
-
 var restApiCardButtonCallback = function(t) {
   return t.getRestApi()
    .isAuthorized()
