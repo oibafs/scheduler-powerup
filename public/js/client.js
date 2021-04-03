@@ -64,9 +64,9 @@ var authenticationFailure = function() {
   return false;
 };
 
-async function authorize() {
+function authorize() {
 
-  window.Trello.authorize({
+  return window.Trello.authorize({
     type: 'popup',
     name: 'Getting Started Application',
     scope: {
@@ -81,19 +81,20 @@ async function authorize() {
 
 function equalize(id) {
 
-  const authorized = await authorize();
+  const authorized = authorize()
+    .then(() => {
 
-  if (authorized) {
-
-    window.Trello.cards.get(id, {
-      customFields: 'true',
-      customFieldItems: 'true',
-      checklists: 'all'
-    })
-      .then((card) => {
-        console.log(JSON.stringify(card, null, 2))
+      window.Trello.cards.get(id, {
+        customFields: 'true',
+        customFieldItems: 'true',
+        checklists: 'all'
       })
+        .then((card) => {
+          console.log(JSON.stringify(card, null, 2))
+        })
   
+    })
+
   }
 
 }
