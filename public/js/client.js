@@ -1,5 +1,5 @@
 /* global TrelloPowerUp */
-// import { equalize } from './equalize.js';
+import { equalize } from './equalize.js';
 
 var Promise = TrelloPowerUp.Promise;
 
@@ -35,11 +35,9 @@ var restApiCardButtonCallback = function(t) {
               const customFieldModel = t.board('customFields');
               const card = t.card('all');
               return Promise.all([customFieldModel, card])
-                .then(function(customFieldModel, card) {
-                  console.log("Custom fields");
-                  console.log(customFieldModel);
-                  console.log("Card");
-                  console.log(card);
+                .then(function(result) {
+                  equalize(result[1], result[0]);
+                  t.closePopup();
                 })
             }
           }, {
