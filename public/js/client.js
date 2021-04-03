@@ -47,11 +47,55 @@ function getCustomFields(items, fieldsModel) {
   return json;
 }
 
-function equalize(card, customFieldModel) {
-  let work = {};
-  work.start = card.badges.start;
-  work.customFields = card.customFieldItems ? getCustomFields(card.customFieldItems, customFieldModel) : {};
-  console.log(work);
+// function equalize(card, customFieldModel) {
+//   let work = {};
+//   work.start = card.badges.start;
+//   work.customFields = card.customFieldItems ? getCustomFields(card.customFieldItems, customFieldModel) : {};
+//   console.log(work);
+// }
+
+var authenticationSuccess = function() {
+  console.log('Successful authentication');
+  return true;
+};
+
+var authenticationFailure = function() {
+  console.log('Failed authentication');
+  return false;
+};
+
+async function authorize() {
+
+  window.Trello.authorize({
+    type: 'popup',
+    name: 'Getting Started Application',
+    scope: {
+      read: 'true',
+      write: 'true' },
+    expiration: 'never',
+    success: authenticationSuccess,
+    error: authenticationFailure
+  });
+
+}
+
+function equalize(id) {
+
+  const authorized = await authorize();
+
+  if (authorized) {
+
+    window.Trello.cards.get(id, {
+      customFields: 'true',
+      customFieldItems: 'true',
+      checklists: 'all'
+    })
+      .then((card) => {
+        console.log(JSON.stringify(card, null, 2))
+      })
+  
+  }
+
 }
 
 var restApiCardButtonCallback = function(t) {
@@ -90,14 +134,7 @@ var restApiCardButtonCallback = function(t) {
               //   })
               const card = t.card('id')
                 .then(function(card) {
-                  window.Trello.cards.get(card.id, {
-                    customFields: 'true',
-                    customFieldItems: 'true',
-                    checklists: 'all'
-                  })
-                    .then(function(cardResp) {
-                      console.log(JSON.stringify(cardResp, null, 2))
-                    })
+                  equalize(card.id);
                 })
             }
           }, {
