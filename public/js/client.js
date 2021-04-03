@@ -158,6 +158,22 @@ var restApiCardButtonCallback = function(t) {
               equalize(t);
             }
           }, {
+            text: 'SET',
+            callback: function(t) {
+              t.set('member', 'private', 'newkey', 'Paunocu')
+                .then((result) => {
+                  console.log(result);
+                });
+            }
+          }, {
+            text: 'GET',
+            callback: function(t) {
+              t.get('member', 'private', 'newkey', 'Fudeu')
+                .then((result) => {
+                  console.log(result);
+                });
+            }
+          }, {
            // You can de-authorize the REST API client with a call to .clearToken()
            text: 'Unauthorize',
            callback: function(t) {
