@@ -90,18 +90,15 @@ var restApiCardButtonCallback = function(t) {
               //   })
               const card = t.card('id')
                 .then(function(card) {
-                  return t.getRestApi()
-                    .then(function(t) {
-                      t.cards.get(card.id, {
-                        customFields: 'true',
-                        customFieldItems: 'true',
-                        checklists: 'all'
-                      })
-                        .then(function(cardResp) {
-                          console.log(JSON.stringify(cardResp, null, 2))
-                        })
-                    })
+                  window.Trello.cards.get(card.id, {
+                    customFields: 'true',
+                    customFieldItems: 'true',
+                    checklists: 'all'
                   })
+                    .then(function(cardResp) {
+                      console.log(JSON.stringify(cardResp, null, 2))
+                    })
+                })
             }
           }, {
            // You can de-authorize the REST API client with a call to .clearToken()
