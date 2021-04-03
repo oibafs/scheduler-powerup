@@ -1,5 +1,3 @@
-import { getCustomFields } from './common.js';
-
 export function equalize(card, customFieldModel) {
   let work = {};
   work.start = card.start;
