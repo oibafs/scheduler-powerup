@@ -49,7 +49,7 @@ function getCustomFields(items, fieldsModel) {
 
 function equalize(card, customFieldModel) {
   let work = {};
-  work.start = card.start;
+  work.start = card.badges.start;
   work.customFields = card.customFieldItems ? getCustomFields(card.customFieldItems, customFieldModel) : {};
   console.log(work);
 }
@@ -81,12 +81,23 @@ var restApiCardButtonCallback = function(t) {
          }, {
             text: 'Equalize dates',
             callback: function(t) {
-              const customFieldModel = t.board('customFields');
-              const card = t.card('all');
-              return Promise.all([customFieldModel, card])
-                .then(function(result) {
-                  equalize(result[1], result[0].customFields);
-                  t.closePopup();
+              // const customFieldModel = t.board('customFields');
+              // const card = t.card('all');
+              // return Promise.all([customFieldModel, card])
+              //   .then(function(result) {
+              //     equalize(result[1], result[0].customFields);
+              //     t.closePopup();
+              //   })
+              const card = t.card('id')
+                .then(function(card) {
+                  t.getRestApi().cards.get(card.id, {
+                    customFields: 'true',
+                    customFieldItems: 'true',
+                    checklists: 'all'
+                  })
+                    .then(function(cardResp) {
+                      console.log(JSON.stringify(cardResp, null, 2))
+                    })
                 })
             }
           }, {
