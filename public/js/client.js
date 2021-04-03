@@ -1,9 +1,58 @@
 /* global TrelloPowerUp */
-import { equalize } from './equalize.js';
-
 var Promise = TrelloPowerUp.Promise;
 
 var BLACK_ROCKET_ICON = 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Frocket-ship.png?1494946700421';
+
+function getCustomFields(cardJson, items, fieldsModel) {
+  let json = {};
+
+  // Process custom field items
+  for (let i = 0; i < items.length; i ++) {
+
+    // Find custom field model
+    const model = fieldsModel.filter(model => model.id == items[i].idCustomField);
+    const name = model[0].name;
+
+    if (items[i].value) {
+
+      // Direct value
+      const value = Object.values(items[i].value)[0];
+      json[name] = value;
+
+    } else {
+
+      // Get value from options
+      const value = Object.values(model[0].options.filter(model => model.id == items[i].idValue)[0].value)[0];
+      json[name] = value;
+
+    }
+
+  }
+
+  // Get custom field ids and values
+  for (let i = 0; i < fieldsModel.length; i ++) {
+    const name = fieldsModel[i].name;
+    const customFieldId = "idCustomField" + name;
+    json.[customFieldId] = fieldsModel[i].id;
+
+    for (let j = 0; j < (fieldsModel[i].options ? fieldsModel[i].options.length : 0); j ++) {
+      const idValue = fieldsModel[i].options[j].id;
+      const value = fieldsModel[i].options[j].value.text;
+      const customFieldIdValue = "idCustomFieldValue" + name + value;
+      json.[customFieldIdValue] = idValue;
+    }
+
+  }
+
+  return json;
+}
+
+function equalize(card, customFieldModel) {
+  let work = {};
+  work.start = card.start;
+  work.customFields = card.customFieldItems ? getCustomFields(card.customFieldItems, customFieldModel) : {};
+  console.log(work);
+}
 
 var restApiCardButtonCallback = function(t) {
   return t.getRestApi()
