@@ -72,6 +72,7 @@ function equalize(t) {
       .then((token) => {
 
         if (token) {
+          console.log(token);
           window.Trello.setToken(token);
         } else {
 
