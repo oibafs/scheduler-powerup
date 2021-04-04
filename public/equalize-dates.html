@@ -49,6 +49,50 @@
         let error = (error) => {
           alert(JSON.stringify(error, null, 2));
         }
+
+        let getCustomFields = (items, fieldsModel) => {
+          let json = {};
+
+          // Process custom field items
+          for (let i = 0; i < items.length; i ++) {
+
+            // Find custom field model
+            const model = fieldsModel.filter(model => model.id == items[i].idCustomField);
+            const name = model[0].name;
+
+            if (items[i].value) {
+
+              // Direct value
+              const value = Object.values(items[i].value)[0];
+              json[name] = value;
+
+            } else {
+
+              // Get value from options
+              const value = Object.values(model[0].options.filter(model => model.id == items[i].idValue)[0].value)[0];
+              json[name] = value;
+
+            }
+
+          }
+
+          // Get custom field ids and values
+          for (let i = 0; i < fieldsModel.length; i ++) {
+            const name = fieldsModel[i].name;
+            const customFieldId = "idCustomField" + name;
+            json[customFieldId] = fieldsModel[i].id;
+
+            for (let j = 0; j < (fieldsModel[i].options ? fieldsModel[i].options.length : 0); j ++) {
+              const idValue = fieldsModel[i].options[j].id;
+              const value = fieldsModel[i].options[j].value.text;
+              const customFieldIdValue = "idCustomFieldValue" + name + value;
+              json[customFieldIdValue] = idValue;
+            }
+
+          }
+
+          return json;
+        }
         
         let equalize = (t, token) => {
           console.log('1. equalize');
@@ -67,7 +111,10 @@
                   checklists: 'all'
                 })
                   .then((card) => {
-                    console.log(JSON.stringify(card, null, 2))
+                    let work = {};
+                    work.start = card.start;
+                    work.customFields = (card.customFieldItems && card.customFields) ? getCustomFields(card.customFieldItems, card.customFields) : {};
+                    console.log(work);
                   })
 
               } catch(err) {
