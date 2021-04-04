@@ -54,14 +54,14 @@
           console.log('1. equalize');
 
           t.card('id')
-            .then((id) => {
-              console.log(`2. id=${id}`);
+            .then((card) => {
+              console.log(`2. id=${card.id}`);
               window.Trello.setToken(token);
               console.log(`3. token=${token}`);
 
               try {
 
-                window.Trello.cards.get(id, {
+                window.Trello.cards.get(card.id, {
                   customFields: 'true',
                   customFieldItems: 'true',
                   checklists: 'all'
