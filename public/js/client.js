@@ -135,6 +135,14 @@ var restApiCardButtonCallback = function(t) {
        return t.popup({
          title: "Choose an action",
          items: [{
+            text: 'Equalizer 2',
+            callback: function(t) {
+              return t.popup({
+                title: 'Equalize dates',
+                url: './equalize-dates.html'
+              })
+            }
+         }, {
            // We'll use the client on the authorization page to make an example request.
            text: 'Postpone card',
            callback: function(t) {
