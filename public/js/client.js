@@ -54,27 +54,33 @@ function getCustomFields(items, fieldsModel) {
 //   console.log(work);
 // }
 
-var authenticationSuccess = function(t) {
+var authenticationSuccess = function() {
+  console.log('5. authenticationSuccess');
   console.log('Successful authentication');
-  t.set('member', 'private', 'token', window.Trello.token());
+  // t.set('member', 'private', 'token', window.Trello.token());
 };
 
 var authenticationFailure = function() {
+  console.log('5. authenticationFailure');
   console.log('Failed authentication');
   t.closePopup();
 };
 
 function equalize(t) {
+  console.log('1. equalize');
 
   if (!window.Trello.authorized()) {
+    console.log('2. not authorized');
 
     t.get('member', 'private', 'token', null)
       .then((token) => {
+        console.log(`3. token: ${token}`);
 
         if (token) {
-          console.log(token);
+          console.log(`4. token: ${token}`);
           window.Trello.setToken(token);
         } else {
+          console.log(`4. !token: ${token}`);
 
           window.Trello.authorize({
             type: 'popup',
@@ -82,19 +88,17 @@ function equalize(t) {
             scope: {
               read: 'true',
               write: 'true' },
-            expiration: 'never' //,
-            // success: authenticationSuccess(t),
-            // error: authenticationFailure
+            expiration: 'never',
+            success: authenticationSuccess,
+            error: authenticationFailure
           })
-            .then((result) => {
-              console.log(result);
-            });    
       
         }
 
       })
 
   } else {
+    console.log('2. authorized');
     console.log('Already authorized!');
   }
 
