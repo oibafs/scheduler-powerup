@@ -156,26 +156,28 @@
           console.log('Success');
           console.log(response);
           const newStart = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.start));
-          $("#response").append(`<red>Start date changed to ${newStart}<br></red>`);
+          $("#response").append(`<sm>Start date changed to ${newStart}<br></sm>`);
           $("#response").show();
         }
 
         const startDateFailure = (response) => {
           console.log('Error');
           console.log(response);
+          $("#response").append(`<sm><red>Error ${response.status} - ${response.responseText}<br></red></sm>`);
         }
 
         const checkListSuccess = (response) => {
           console.log('Success check list');
           console.log(response);
           const newDue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.due));
-          $("#response").append(`Due date of check list item ${response.name} changed to ${newDue}<br>`);
+          $("#response").append(`<sm>Due date of check list item ${response.name} changed to ${newDue}<br></sm>`);
           $("#response").show();
         }
 
         const checkListFailure = (response) => {
           console.log('Error');
           console.log(response);
+          $("#response").append(`<sm><red>Error ${response.status} - ${response.responseText}<br></red></sm>`);
         }
 
         const equalize = (t, token) => {
