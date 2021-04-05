@@ -217,7 +217,7 @@ const postponeByRules = (json) => {
 // Success on putting new due date
 const putDueDateSuccess = (response) => {
   const newDue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.due));
-  $("#response").append(`<sm>Due date: ${newStart}<br></sm>`);
+  $("#response").append(`<sm>Due date: ${newDue}<br></sm>`);
   $("#response").show();
 }
 
