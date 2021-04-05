@@ -25,7 +25,9 @@
 
     <!-- And because we're ALSO doing Power-Up-related things, we still need the Power-Up client library -->
     <script src="https://p.trellocdn.com/power-up.min.js"></script>
-    
+
+    <script src type="module" src="js/equalize-dates.js"></script>
+
     <script>
     
       $(document).ready(function() {
@@ -38,7 +40,7 @@
           appName: 'Scheduler'
         });
 
-        const getCustomFields = (items, fieldsModel) => {
+/*         const getCustomFields = (items, fieldsModel) => {
           let json = {};
 
           // Process custom field items
@@ -207,7 +209,7 @@
 
             })
 
-        }
+        } */
 
         t.getRestApi()
           .getToken()
