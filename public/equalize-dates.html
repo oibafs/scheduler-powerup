@@ -160,16 +160,27 @@
           return putJson;
         }
 
-        const putSuccess = (response) => {
+        const startDateSuccess = (response) => {
           console.log('Success');
           console.log(response);
+          $("code").html(`Start date changed to ${response.start}`);
+          $("code").show();
         }
 
-        const putError = (response) => {
+        const startDateFailure = (response) => {
           console.log('Error');
           console.log(response);
         }
 
+        const checkListSuccess = (response) => {
+          console.log('Success check list');
+          console.log(response);
+        }
+
+        const checkListFailure = (response) => {
+          console.log('Error');
+          console.log(response);
+        }
 
         const equalize = (t, token) => {
 
@@ -198,13 +209,12 @@
 
                     // Update main fields
                     if (output.main) {
+                      window.Trello.put(`card/${card.id}`, output.main.params, startDateSuccess, startDateFailure);
+                    }
 
-                      window.Trello.put(`card/${card.id}`, output.main.params, putSuccess, putError)
-                        .then((response) => {
-                          console.log('Response');
-                          console.log(response);
-                        });
-                      
+                    // Update check list items
+                    for(let i = 0; i < output.checkListItems.length; i ++) {
+                      window.Trello.put(`card/${card.id}/checkItem/${output.checkListItems[i].id}`, output.checkListItems[i].params, checkListSuccess, checkListFailure);
                     }
 
                   })
