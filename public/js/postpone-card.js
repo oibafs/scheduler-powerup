@@ -231,7 +231,7 @@ const putCustomFieldSuccess = (response) => {
 // Postpone card
 const postponeCard = (id) => {
 
-  window.Trello.cards.get(card.id, {
+  window.Trello.cards.get(id, {
       customFields: 'true',
       customFieldItems: 'true',
       checklists: 'all'
