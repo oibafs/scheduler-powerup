@@ -23,7 +23,17 @@ var restApiCardButtonCallback = function(t) {
 
         return t.popup({
           title: "Choose an action",
-          items: [{
+          items: [
+            {
+              text: 'Postpone card',
+              callback: function(t) {
+                return t.popup({
+                  title: 'Postpone card',
+                  url: './postpone-card.html'
+                })
+              }
+            },
+            {
               text: 'Equalize dates',
               callback: function(t) {
                 return t.popup({
@@ -31,18 +41,20 @@ var restApiCardButtonCallback = function(t) {
                   url: './equalize-dates.html'
                 })
               }
-          }, {
-            // You can de-authorize the REST API client with a call to .clearToken()
-            text: 'Unauthorize',
-            callback: function(t) {
-              return t.getRestApi()
-                .clearToken()
-                .then(function() {
-                  t.alert('You\'ve successfully deauthorized!'); 
-                  t.closePopup(); 
-                })
+            },
+            {
+              // You can de-authorize the REST API client with a call to .clearToken()
+              text: 'Unauthorize',
+              callback: function(t) {
+                return t.getRestApi()
+                  .clearToken()
+                  .then(function() {
+                    t.alert('You\'ve successfully deauthorized!'); 
+                    t.closePopup(); 
+                  })
+              }
             }
-          }]
+          ]
 
         })
 
