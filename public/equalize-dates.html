@@ -180,7 +180,7 @@
                     let work = {};
                     work.start = card.start;
                     work.customFields = (card.customFieldItems && card.customFields) ? getCustomFields(card.customFieldItems, card.customFields) : {};
-                    work.getCheckListItems = card.checklists ? getCheckListItems(card.checklists) : {};
+                    work.checkListItems = card.checklists ? getCheckListItems(card.checklists) : {};
                     console.log(`4. work=`);
                     console.log(work);
                     const output = setDates(work);
