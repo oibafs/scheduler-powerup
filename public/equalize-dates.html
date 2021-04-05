@@ -122,7 +122,8 @@
         }
 
         const setDates = (json) => {
-          console.log(`5. json=${json}`);
+          console.log(`5. json=`);
+          console.log(json);
           let putJson = {};
 
           // Set standard start date the same as custom field start date
@@ -180,7 +181,8 @@
                     work.start = card.start;
                     work.customFields = (card.customFieldItems && card.customFields) ? getCustomFields(card.customFieldItems, card.customFields) : {};
                     work.getCheckListItems = card.checklists ? getCheckListItems(card.checklists) : {};
-                    console.log(`4. work=${work}`);
+                    console.log(`4. work=`);
+                    console.log(work);
                     const output = setDates(work);
                     console.log(output);
                   })
