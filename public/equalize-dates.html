@@ -11,9 +11,9 @@
     <!-- <button type="button" class="mod-primary">Click to authorize</button> -->
     
     <!-- We'll use this code block to show the response from the Trello API -->
-    <code id="codeBlock">
-    </code>
-
+    <!-- <code id="codeBlock">
+    </code> -->
+    <div id="response"></div>
     
     <!-- 
       We're going to use client.js to help us make requests to Trello's API.
@@ -33,22 +33,13 @@
     
       $(document).ready(function() {
         
-        $("code").hide();
+        $("#response").hide();
         
         // Initialize the Power-Up client library and include your app name and API key
         var t = window.TrelloPowerUp.iframe({
           appKey: '039f30a96f8f3e440addc095dd42f87d',
           appName: 'Scheduler'
         });
-
-        let success = (response) => {
-          $("code").html(JSON.stringify(response, null, 2));
-          $("code").show();
-        }
-
-        let error = (error) => {
-          alert(JSON.stringify(error, null, 2));
-        }
 
         const getCustomFields = (items, fieldsModel) => {
           let json = {};
@@ -164,8 +155,8 @@
           console.log('Success');
           console.log(response);
           const newStart = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.start));
-          $("code").append(`Start date changed to ${newStart}`);
-          $("code").show();
+          $("#response").append(`Start date changed to ${newStart}<br>`);
+          $("#response").show();
         }
 
         const startDateFailure = (response) => {
@@ -177,8 +168,8 @@
           console.log('Success check list');
           console.log(response);
           const newDue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.due));
-          $("code").append(`Due date of check list item ${response.name} changed to ${newDue}`);
-          $("code").show();
+          $("#response").append(`Due date of check list item ${response.name} changed to ${newDue}<br>`);
+          $("#response").show();
         }
 
         const checkListFailure = (response) => {
