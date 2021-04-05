@@ -163,8 +163,8 @@
         const startDateSuccess = (response) => {
           console.log('Success');
           console.log(response);
-          const newStart = new Date(response.start);
-          $("code").html(`Start date changed to ${newStart}`);
+          const newStart = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.start));
+          $("code").append(`Start date changed to ${newStart}`);
           $("code").show();
         }
 
@@ -176,8 +176,8 @@
         const checkListSuccess = (response) => {
           console.log('Success check list');
           console.log(response);
-          const newDue = new Date(response.due);
-          $("code").html(`Due date of check list item ${response.name} change to ${newDue}`);
+          const newDue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.due));
+          $("code").append(`Due date of check list item ${response.name} changed to ${newDue}`);
           $("code").show();
         }
 
