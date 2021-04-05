@@ -1,3 +1,4 @@
+// Get custom fields of a card
 const getCustomFields = (items, fieldsModel) => {
   let json = {};
 
@@ -42,6 +43,7 @@ const getCustomFields = (items, fieldsModel) => {
   return json;
 }
 
+// Get check list items of a card
 const getCheckListItems = (checkLists, complete) => {
   let jsonItems = [];
 
@@ -69,9 +71,8 @@ const getCheckListItems = (checkLists, complete) => {
   return jsonItems;
 }
 
+// Calculate dates
 const setDates = (json) => {
-  console.log(`5. json=`);
-  console.log(json);
   let putJson = {};
 
   // Set standard start date the same as custom field start date
@@ -108,22 +109,26 @@ const setDates = (json) => {
   return putJson;
 }
 
+// Success on putting new start date
 const startDateSuccess = (response) => {
   const newStart = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.start));
   $("#response").append(`<sm>Start date: ${newStart}<br></sm>`);
   $("#response").show();
 }
 
+// Failure on put request
 const requestFailure = (response) => {
   $("#response").append(`<sm><red>Error ${response.status} - ${response.responseText}<br></red></sm>`);
 }
 
+// Success on putting new check list item due date
 const checkListSuccess = (response) => {
   const newDue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.due));
   $("#response").append(`<sm>${response.name}: ${newDue}<br></sm>`);
   $("#response").show();
 }
 
+// Equalize dates
 const equalize = (t, token) => {
 
   t.card('id')
@@ -157,6 +162,12 @@ const equalize = (t, token) => {
             // Update check list items
             for(let i = 0; i < output.checkListItems.length; i ++) {
               window.Trello.put(`card/${card.id}/checkItem/${output.checkListItems[i].id}`, output.checkListItems[i].params, checkListSuccess, requestFailure);
+            }
+
+            //Nothing to update
+            if (!output.main && output.checkListItems.length === 0) {
+              $("#response").append(`<sm>Nothing to update!<br></sm>`);
+              $("#response").show();            
             }
 
           })
