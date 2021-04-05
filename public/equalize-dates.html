@@ -163,7 +163,8 @@
         const startDateSuccess = (response) => {
           console.log('Success');
           console.log(response);
-          $("code").html(`Start date changed to ${response.start}`);
+          const newStart = new Date(response.start);
+          $("code").html(`Start date changed to ${newStart}`);
           $("code").show();
         }
 
@@ -175,6 +176,9 @@
         const checkListSuccess = (response) => {
           console.log('Success check list');
           console.log(response);
+          const newDue = new Date(response.due);
+          $("code").html(`Due date of check list item ${response.name} change to ${newDue}`);
+          $("code").show();
         }
 
         const checkListFailure = (response) => {
