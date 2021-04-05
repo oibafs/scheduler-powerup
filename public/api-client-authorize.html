@@ -49,7 +49,12 @@
             console.log('But it doesn\'t exist');
             document.querySelector('button').addEventListener('click', function() {
               t.getRestApi()
-              .authorize({ scope: 'read', expiration: 'never' })
+              .authorize({ 
+                scope: {
+                  read: 'true',
+                  write: 'true' 
+                }, 
+                expiration: 'never' })
               .then(function() {
                 t.closePopup();
                 alert('Successfully authorized')
