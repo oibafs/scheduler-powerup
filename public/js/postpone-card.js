@@ -254,8 +254,15 @@ const postponeCard = (id) => {
 
       // Update custom fields
       for(let i = 0; i < output.customFields.length; i ++) {
-        window.Trello.put(`card/${card.id}/customField/${output.customFields[i].idCustomField}`, output.customFields[i].params, putCustomFieldSuccess, requestFailure);
-      }
+
+        window.Trello.put(`card/${card.id}/customField/${output.customFields[i].idCustomField}`, {
+            body: JSON.stringify(output.customFields[i].body),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }, putCustomFieldSuccess, requestFailure);
+      
+        }
 
       // Update check list items
       for(let i = 0; i < output.checkListItems.length; i ++) {
