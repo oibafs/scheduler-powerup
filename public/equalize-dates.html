@@ -94,6 +94,33 @@
           return json;
         }
         
+        const getCheckListItems = (checkLists, complete) => {
+          let jsonItems = [];
+
+          // Process check lists
+          for(let i = 0; i < checkLists.length; i ++) {
+
+            // Process check list items
+            for(let j = 0; j < checkLists[i].checkItems.length; j ++) {
+
+              // Items incomplete and with due date
+              if((checkLists[i].checkItems[j].state === "incomplete" || complete) && checkLists[i].checkItems[j].due) {
+        
+                jsonItems.push({
+                  id: checkLists[i].checkItems[j].id,
+                  name: checkLists[i].checkItems[j].name,
+                  due: checkLists[i].checkItems[j].due,
+                });
+                
+              }
+
+            }
+
+          }
+
+          return jsonItems;
+        }
+
         let equalize = (t, token) => {
           console.log('1. equalize');
 
@@ -114,6 +141,7 @@
                     let work = {};
                     work.start = card.start;
                     work.customFields = (card.customFieldItems && card.customFields) ? getCustomFields(card.customFieldItems, card.customFields) : {};
+                    work.getCheckListItems = card.checklists ? getCheckListItems(card.checklists) : {};
                     console.log(work);
                   })
 
