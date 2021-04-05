@@ -124,7 +124,7 @@ const checkListSuccess = (response) => {
   $("#response").show();
 }
 
-export const equalize = (t, token) => {
+const equalize = (t, token) => {
 
   t.card('id')
     .then((card) => {
