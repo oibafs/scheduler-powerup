@@ -50,7 +50,7 @@
           alert(JSON.stringify(error, null, 2));
         }
 
-        let getCustomFields = (items, fieldsModel) => {
+        const getCustomFields = (items, fieldsModel) => {
           let json = {};
 
           // Process custom field items
@@ -121,7 +121,44 @@
           return jsonItems;
         }
 
-        let equalize = (t, token) => {
+        const setDates = (json) => {
+          let putJson = {};
+
+          // Set standard start date the same as custom field start date
+          if (json.customFields["Start date"] && (json.start != json.customFields["Start date"])) {
+            json.start = json.customFields["Start date"];
+
+            putJson.main = {
+              params : {
+                start : JSON.parse(JSON.stringify(json.start))
+              }
+            };
+
+          }
+
+          // Set first custom field date the same as custom field next action
+          putJson.checkListItems = [];
+
+          if (json.checkListItems.length > 0) {
+
+            if (json.customFields["Next action"] && (json.checkListItems[0].due != json.customFields["Next action"])) {
+              json.checkListItems[0].due = json.customFields["Next action"];
+          
+              putJson.checkListItems.push({
+                id : json.checkListItems[0].id,
+                params : {
+                  due : JSON.parse(JSON.stringify(json.checkListItems[0].due))
+                }
+              })
+          
+            }
+          
+          }
+
+          return putJson;
+        }
+
+        const equalize = (t, token) => {
           console.log('1. equalize');
 
           t.card('id')
@@ -142,7 +179,8 @@
                     work.start = card.start;
                     work.customFields = (card.customFieldItems && card.customFields) ? getCustomFields(card.customFieldItems, card.customFields) : {};
                     work.getCheckListItems = card.checklists ? getCheckListItems(card.checklists) : {};
-                    console.log(work);
+                    const output = setDates(work);
+                    console.log(output);
                   })
 
               } catch(err) {
