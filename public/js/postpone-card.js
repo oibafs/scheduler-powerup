@@ -1,5 +1,3 @@
-const { response, text } = require("express");
-
 // Calculate difference between two dates in days
 const dateDiff = (originalDate, futureDate) => {
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
