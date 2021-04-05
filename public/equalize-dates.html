@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Equalize dates</title>
     <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+    <link rel="stylesheet" href="./css/styles.css">
     
   </head>
   <body>
@@ -155,7 +156,7 @@
           console.log('Success');
           console.log(response);
           const newStart = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.start));
-          $("#response").append(`Start date changed to ${newStart}<br>`);
+          $("#response").append(`<red>Start date changed to ${newStart}<br></red>`);
           $("#response").show();
         }
 
@@ -209,7 +210,7 @@
 
                     // Update check list items
                     for(let i = 0; i < output.checkListItems.length; i ++) {
-                      window.Trello.put(`card/${card.id}/checkItem/${output.checkListItems[i].id}`, output.checkListItems[i].params, checkListSuccess, checkListFailure);
+                      window.Trello.put(`card/${card.id}/checkItem/${output.checkListItems[i].id}1`, output.checkListItems[i].params, checkListSuccess, checkListFailure);
                     }
 
                   })
