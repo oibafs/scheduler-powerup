@@ -229,7 +229,7 @@ const putCustomFieldSuccess = (response) => {
 }
 
 // Postpone card
-const postponeCard = (id) => {
+const postponeCard = (id, token) => {
 
   window.Trello.cards.get(id, {
       customFields: 'true',
@@ -254,7 +254,6 @@ const postponeCard = (id) => {
 
       // Update custom fields
       for (let i = 0; i < output.customFields.length; i ++) {
-        const token = window.Trello.getToken();
 
         fetch(`https://api.trello.com/1/cards/${card}/checkItem/${putJson.checkListItems[i].id}?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
           method: 'POST',
@@ -304,6 +303,6 @@ const postpone = (t, token) => {
   t.card('id')
     .then((card) => {
       window.Trello.setToken(token);
-      postponeCard(card.id);
+      postponeCard(card.id, token);
     })
 }
