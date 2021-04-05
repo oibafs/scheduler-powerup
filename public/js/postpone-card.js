@@ -1,3 +1,5 @@
+const { response, text } = require("express");
+
 // Calculate difference between two dates in days
 const dateDiff = (originalDate, futureDate) => {
   const _MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -253,7 +255,26 @@ const postponeCard = (id) => {
       }
 
       // Update custom fields
-      for(let i = 0; i < output.customFields.length; i ++) {
+      for (let i = 0; i < output.customFields.length; i ++) {
+        const token = window.Trello.getToken();
+
+        fetch(`https://api.trello.com/1/cards/${card}/checkItem/${putJson.checkListItems[i].id}?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
+          method: 'POST',
+          body: JSON.stringify(output.customFields[i].body),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.text()
+        .then(text => {
+
+          if (response.ok) {
+            text = JSON.parse(text);
+            putCustomFieldSuccess(text);
+          }
+
+        })
+        )
 
         window.Trello.put(`card/${card.id}/customField/${output.customFields[i].idCustomField}`, {
             body: JSON.stringify(output.customFields[i].body),
@@ -265,7 +286,7 @@ const postponeCard = (id) => {
         }
 
       // Update check list items
-      for(let i = 0; i < output.checkListItems.length; i ++) {
+      for (let i = 0; i < output.checkListItems.length; i ++) {
         window.Trello.put(`card/${card.id}/checkItem/${output.checkListItems[i].id}`, output.checkListItems[i].params, putCheckListSuccess, requestFailure);
       }
 
