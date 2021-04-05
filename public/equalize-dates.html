@@ -160,6 +160,17 @@
           return putJson;
         }
 
+        const putSuccess = (response) => {
+          console.log('Success');
+          console.log(response);
+        }
+
+        const putError = (response) => {
+          console.log('Error');
+          console.log(response);
+        }
+
+
         const equalize = (t, token) => {
 
           t.card('id')
@@ -188,8 +199,9 @@
                     // Update main fields
                     if (output.main) {
 
-                      window.Trello.put(`card/${card.id}1`, output.main.params)
+                      window.Trello.put(`card/${card.id}`, output.main.params, putSuccess, putError)
                         .then((response) => {
+                          console.log('Response');
                           console.log(response);
                         });
                       
