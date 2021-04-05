@@ -9,11 +9,7 @@
   </head>
   <body>
     
-    <!-- <button type="button" class="mod-primary">Click to authorize</button> -->
-    
     <!-- We'll use this code block to show the response from the Trello API -->
-    <!-- <code id="codeBlock">
-    </code> -->
     <div id="response"></div>
     
     <!-- 
@@ -153,31 +149,19 @@
         }
 
         const startDateSuccess = (response) => {
-          console.log('Success');
-          console.log(response);
           const newStart = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.start));
-          $("#response").append(`<sm>Start date changed to ${newStart}<br></sm>`);
+          $("#response").append(`<sm>Start date: ${newStart}<br></sm>`);
           $("#response").show();
         }
 
-        const startDateFailure = (response) => {
-          console.log('Error');
-          console.log(response);
+        const requestFailure = (response) => {
           $("#response").append(`<sm><red>Error ${response.status} - ${response.responseText}<br></red></sm>`);
         }
 
         const checkListSuccess = (response) => {
-          console.log('Success check list');
-          console.log(response);
           const newDue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.due));
-          $("#response").append(`<sm>Due date of check list item ${response.name} changed to ${newDue}<br></sm>`);
+          $("#response").append(`<sm>${response.name}: ${newDue}<br></sm>`);
           $("#response").show();
-        }
-
-        const checkListFailure = (response) => {
-          console.log('Error');
-          console.log(response);
-          $("#response").append(`<sm><red>Error ${response.status} - ${response.responseText}<br></red></sm>`);
         }
 
         const equalize = (t, token) => {
@@ -207,12 +191,12 @@
 
                     // Update main fields
                     if (output.main) {
-                      window.Trello.put(`card/${card.id}`, output.main.params, startDateSuccess, startDateFailure);
+                      window.Trello.put(`card/${card.id}`, output.main.params, startDateSuccess, requestFailure);
                     }
 
                     // Update check list items
                     for(let i = 0; i < output.checkListItems.length; i ++) {
-                      window.Trello.put(`card/${card.id}/checkItem/${output.checkListItems[i].id}1`, output.checkListItems[i].params, checkListSuccess, checkListFailure);
+                      window.Trello.put(`card/${card.id}/checkItem/${output.checkListItems[i].id}`, output.checkListItems[i].params, checkListSuccess, requestFailure);
                     }
 
                   })
@@ -228,10 +212,8 @@
         t.getRestApi()
           .getToken()
             .then((token) => {
-              console.log('We\'ve received a token!')
 
               if (token) {
-                console.log('So let\'s move on to the request.');
                 equalize(t, token);
               } else {
                 t.closePopup();

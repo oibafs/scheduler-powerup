@@ -42,29 +42,30 @@
         });
 
         t.getRestApi()
-        .getToken()
-        .then((token) => {
-          console.log('We\'ve received a token!')
-          if (!token) { 
-            console.log('But it doesn\'t exist');
-            document.querySelector('button').addEventListener('click', function() {
-              t.getRestApi()
-              .authorize({ 
-                scope: {
-                  read: 'true',
-                  write: 'true' 
-                }, 
-                expiration: 'never' })
-              .then(function() {
-                t.closePopup();
-                alert('Successfully authorized')
+          .getToken()
+          .then((token) => {
+
+            if (!token) { 
+
+              document.querySelector('button').addEventListener('click', function() {
+                t.getRestApi()
+                  .authorize({ 
+                    scope: {
+                      read: 'true',
+                      write: 'true' 
+                    }, 
+                    expiration: 'never' })
+                    .then(function() {
+                      t.closePopup();
+                      alert('Successfully authorized')
+                    });
               });
-            });
-          } else {
-            t.closePopup();
-            alert('Already authorized');
-          }
-        });
+
+            } else {
+              t.closePopup();
+              alert('Already authorized');
+            }
+          });
       });
     </script>
   </body>
