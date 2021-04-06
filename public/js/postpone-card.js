@@ -223,9 +223,14 @@ const putDueDateSuccess = (response) => {
 
 // Success on putting new custom field value
 const putCustomFieldSuccess = (response) => {
-  const newValue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.value));
+  const newValue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.value.date));
   $("#response").append(`<sm>Custom field: ${newDue}<br></sm>`);
   $("#response").show();
+}
+
+// Failure on putting new custom field value
+const putCustomFieldFailure = (text) => {
+  $("#response").append(`<sm><red>${text}<br></red></sm>`);
 }
 
 // Postpone card
@@ -265,6 +270,8 @@ const postponeCard = (id, token) => {
           if (response.ok) {
             text = JSON.parse(text);
             putCustomFieldSuccess(text);
+          } else {
+            putCustomFieldFailure(`Error ${response.status} - ${text}`);
           }
 
         })

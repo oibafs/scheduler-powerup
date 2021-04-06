@@ -3,7 +3,6 @@ const getCardSuccess = () => {}
 
 // Failure on put request
 const requestFailure = (response) => {
-  console.log(response);
   $("#response").append(`<sm><red>Error ${response.status} - ${response.responseText}<br></red></sm>`);
 }
 
