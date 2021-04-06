@@ -255,12 +255,9 @@ const postponeCard = (id, token) => {
       // Update custom fields
       for (let i = 0; i < output.customFields.length; i ++) {
 
-        fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${card.id}/checkItem/${output.customFields[i].id}?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
+        fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${card.id}/customField/${output.customFields[i].idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
           method: 'POST',
-          body: JSON.stringify(output.customFields[i].body),
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          body: JSON.stringify(output.customFields[i].body)
         })
         .then(response => response.text()
         .then(text => {
@@ -273,14 +270,7 @@ const postponeCard = (id, token) => {
         })
         )
 
-        window.Trello.put(`card/${card.id}/customField/${output.customFields[i].idCustomField}`, {
-            body: JSON.stringify(output.customFields[i].body),
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }, putCustomFieldSuccess, requestFailure);
-      
-        }
+      }
 
       // Update check list items
       for (let i = 0; i < output.checkListItems.length; i ++) {
