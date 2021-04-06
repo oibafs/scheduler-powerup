@@ -224,7 +224,7 @@ const putDueDateSuccess = (response) => {
 // Success on putting new custom field value
 const putCustomFieldSuccess = (response) => {
   const newValue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.value.date));
-  $("#response").append(`<sm>Custom field: ${newDue}<br></sm>`);
+  $("#response").append(`<sm>Custom field: ${newValue}<br></sm>`);
   $("#response").show();
 }
 
