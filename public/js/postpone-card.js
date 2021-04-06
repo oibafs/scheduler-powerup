@@ -263,7 +263,10 @@ const postponeCard = (id, token) => {
 
         fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${card.id}/customField/${output.customFields[i].idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
           method: 'PUT',
-          body: JSON.stringify(output.customFields[i].body)
+          body: JSON.stringify(output.customFields[i].body),
+          headers: {
+            'Content-Type': 'application/json'
+          }
         })
         .then(response => response.text()
         .then(text => {
