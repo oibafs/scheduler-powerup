@@ -255,8 +255,7 @@ const postponeCard = (id, token) => {
       // Update custom fields
       for (let i = 0; i < output.customFields.length; i ++) {
 
-        fetch(`https://api.trello.com/1/cards/${card}/checkItem/${output.checkListItems[i].id}?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
-          mode: 'no-cors',
+        fetch(`https://api.trello.com/1/cards/${card.id}/checkItem/${output.customFields[i].id}?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
           method: 'POST',
           body: JSON.stringify(output.customFields[i].body),
           headers: {
