@@ -96,6 +96,10 @@ TrelloPowerUp.initialize({
         callback: function (t, opts) {
           // Trello will call this if the user clicks on this sort
           // opts.cards contains all card objects in the list
+          t.board("customFields")
+          .then((board) => {
+            console.log(board);
+          })
           var sortedCards = opts.cards.sort(
             function(a,b) {
               console.log(a);
