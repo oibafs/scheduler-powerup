@@ -76,7 +76,7 @@ var sortPriorityCallback = (t, opts) => {
         const field = customFieldItems.filter(i => i.idCustomField === model.id)[0];
         switch(model.type) {
           case("list"):
-            return model.options.findIndex(i => i.id === field.idValue);
+            return model.options.findIndex(i => i.id === field.idValue).toString();
           case("checkbox"):
             return field.value.checked;
           default:
@@ -92,7 +92,7 @@ var sortPriorityCallback = (t, opts) => {
       return {
         id: item.id,
         sorter: (
-          fieldValue(board.customFields, item.customFields, "Priority").toString() 
+          fieldValue(board.customFields, item.customFields, "Priority") 
           + fieldValue(board.customFields, item.customFields, "Next action")
           + item.due
           + fieldValue(board.customFields, item.customFields, "Start date"))
