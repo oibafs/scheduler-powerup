@@ -2,6 +2,8 @@
 var Promise = TrelloPowerUp.Promise;
 
 var BLACK_ROCKET_ICON = 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9e08a%2Frocket-ship.png?1494946700421';
+var WHITE_ICON = 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-white.svg';
+var BLACK_ICON = 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-black.svg';
 
 var restApiCardButtonCallback = function(t) {
 
@@ -82,7 +84,7 @@ const fieldValue = (customFields, customFieldItems, name) => {
   }
 }
 
-var sortPriorityCallback = (t, opts) => {
+const sortPriorityCallback = (t, opts) => {
   // Trello will call this if the user clicks on this sort
   // opts.cards contains all card objects in the list
   return t.board("customFields")
@@ -99,8 +101,6 @@ var sortPriorityCallback = (t, opts) => {
       }
     })
 
-    console.log(cards);
-
     const sortedCards = cards.sort(
       (a, b) => {
         if (a.sorter > b.sorter) {
@@ -111,13 +111,24 @@ var sortPriorityCallback = (t, opts) => {
         return 0;
       });
 
-    console.log(sortedCards);
-
     return {
       sortedIds: sortedCards.map(function (c) { return c.id; })
     };
 
   })
+}
+
+const onTodayClick = (t, opts) => {
+
+  const tomorrow = () => {
+    const today = new Date();
+    const midNight = new Date(today.setHours(0,0,0,0));
+    return new Date(midNight.setDate(midNight.getDate() + 1));
+  }
+
+  console.log(t);
+  console.log(opts);
+
 }
 
 TrelloPowerUp.initialize({
@@ -152,7 +163,19 @@ TrelloPowerUp.initialize({
         callback: sortPriorityCallback
       }];
     });
-  }  
+  },
+  'board-buttons': function (t, opts) {
+    return [{
+      // we can either provide a button that has a callback function
+      icon: {
+        dark: WHITE_ICON,
+        light: BLACK_ICON
+      },
+      text: 'Today',
+      callback: onTodayClick,
+      condition: 'edit'
+    }];
+  }
 }, {
   // appKey: 'your_key_here',
   appKey: '039f30a96f8f3e440addc095dd42f87d',
