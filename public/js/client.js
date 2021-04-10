@@ -84,7 +84,7 @@ var sortPriorityCallback = (t, opts) => {
         }
       }
       catch(err) {
-        return null;
+        return "null";
       }
     }
 
