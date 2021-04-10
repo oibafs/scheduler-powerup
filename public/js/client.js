@@ -64,30 +64,30 @@ var restApiCardButtonCallback = function(t) {
  
   }
 
+const fieldValue = (customFields, customFieldItems, name) => {
+  try {
+    const model = customFields.filter(i => i.name === name)[0];
+    const field = customFieldItems.filter(i => i.idCustomField === model.id)[0];
+    switch(model.type) {
+      case("list"):
+        return model.options.findIndex(i => i.id === field.idValue).toString();
+      case("checkbox"):
+        return field.value.checked;
+      default:
+        return field.value[model.type];
+    }
+  }
+  catch(err) {
+    return "null";
+  }
+}
+
 var sortPriorityCallback = (t, opts) => {
   // Trello will call this if the user clicks on this sort
   // opts.cards contains all card objects in the list
   return t.board("customFields")
   .then((board) => {
     
-    const fieldValue = (customFields, customFieldItems, name) => {
-      try {
-        const model = customFields.filter(i => i.name === name)[0];
-        const field = customFieldItems.filter(i => i.idCustomField === model.id)[0];
-        switch(model.type) {
-          case("list"):
-            return model.options.findIndex(i => i.id === field.idValue).toString();
-          case("checkbox"):
-            return field.value.checked;
-          default:
-            return field.value[model.type];
-        }
-      }
-      catch(err) {
-        return "null";
-      }
-    }
-
     const cards = opts.cards.map((item) => {
       return {
         id: item.id,
