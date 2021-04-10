@@ -140,11 +140,11 @@ const onTodayClick = (t, opts) => {
         return {
           id: item.id,
           addLabel: addLabel,
-          removeLabel: removeLabel
+          deleteLabel: deleteLabel
         }
       });
 
-      const cardsToChange = cardsStatus.filter(item => item.addLabel || item.removeLabel);
+      const cardsToChange = cardsStatus.filter(item => item.addLabel || item.deleteLabel);
       console.log(cardsToChange);
 
       if  (cardsToChange.length > 0) {
