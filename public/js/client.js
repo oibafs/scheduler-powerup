@@ -64,6 +64,62 @@ var restApiCardButtonCallback = function(t) {
  
   }
 
+var sortPriorityCallback = (t, opts) => {
+  // Trello will call this if the user clicks on this sort
+  // opts.cards contains all card objects in the list
+  return t.board("customFields")
+  .then((board) => {
+    
+    const fieldValue = (customFields, customFieldItems, name) => {
+      try {
+        const model = customFields.filter(i => i.name === name)[0];
+        const field = customFieldItems.filter(i => i.idCustomField === model.id)[0];
+        switch(model.type) {
+          case("list"):
+            return model.options.findIndex(i => i.id === field.idValue);
+          case("checkbox"):
+            return field.value.checked;
+          default:
+            return field.value[model.type];
+        }
+      }
+      catch(err) {
+        return null;
+      }
+    }
+
+    const cards = opts.cards.map((item) => {
+      return {
+        id: item.id,
+        sorter: (
+          fieldValue(board.customFields, item.customFields, "Priority").toString() 
+          + fieldValue(board.customFields, item.customFields, "Next action")
+          + item.due
+          + fieldValue(board.customFields, item.customFields, "Start date"))
+      }
+    })
+
+    console.log(cards);
+
+    const sortedCards = cards.sort(
+      (a, b) => {
+        if (a.sorter > b.sorter) {
+          return 1;
+        } else if (b.sorter > a.sorter) {
+          return -1;
+        }
+        return 0;
+      });
+
+    console.log(sortedCards);
+
+    return {
+      sortedIds: sortedCards.map(function (c) { return c.id; })
+    };
+
+  })
+}
+
 TrelloPowerUp.initialize({
   // Start adding handlers for your capabilities here!
 	// 'card-buttons': function(t, options) {
@@ -93,30 +149,7 @@ TrelloPowerUp.initialize({
     .then(function (list) {
       return [{
         text: "Priority",
-        callback: function (t, opts) {
-          // Trello will call this if the user clicks on this sort
-          // opts.cards contains all card objects in the list
-          t.board("customFields")
-          .then((board) => {
-            console.log(board);
-          })
-          var sortedCards = opts.cards.sort(
-            function(a,b) {
-              console.log(a);
-              console.log(b);
-              return 0;
-/*               if (a.name > b.name) {
-                return 1;
-              } else if (b.name > a.name) {
-                return -1;
-              }
-              return 0; */
-            });
-
-          return {
-            sortedIds: sortedCards.map(function (c) { return c.id; })
-          };
-        }
+        callback: sortPriorityCallback
       }];
     });
   }  
