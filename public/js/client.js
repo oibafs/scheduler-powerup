@@ -92,10 +92,10 @@ var sortPriorityCallback = (t, opts) => {
       return {
         id: item.id,
         sorter: (
-          fieldValue(board.customFields, item.customFields, "Priority") 
-          + fieldValue(board.customFields, item.customFields, "Next action")
+          fieldValue(board.customFields, item.customFieldItems, "Priority") 
+          + fieldValue(board.customFields, item.customFieldItems, "Next action")
           + item.due
-          + fieldValue(board.customFields, item.customFields, "Start date"))
+          + fieldValue(board.customFields, item.customFieldItems, "Start date"))
       }
     })
 
