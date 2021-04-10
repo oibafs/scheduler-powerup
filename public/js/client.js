@@ -133,7 +133,7 @@ const onTodayClick = (t, opts) => {
 
       const cardsStatus = cards.map((item) => {
         const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
-        const today = nextAction != "null" ? nextAction < tomorrow() : false;
+        const today = nextAction != "null" ? new Date(nextAction) < tomorrow() : false;
         const labelToday = item.labels ? item.labels.filter(i => i.name === "today").length > 0 : false;
         const addLabel = today && !labelToday;
         const deleteLabel = !today && labelToday;
