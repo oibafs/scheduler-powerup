@@ -156,6 +156,7 @@ const onTodayClick = (t, opts) => {
 
 }
 
+
 TrelloPowerUp.initialize({
   // Start adding handlers for your capabilities here!
 	// 'card-buttons': function(t, options) {
