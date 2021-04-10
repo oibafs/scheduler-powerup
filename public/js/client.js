@@ -126,8 +126,33 @@ const onTodayClick = (t, opts) => {
     return new Date(midNight.setDate(midNight.getDate() + 1));
   }
 
-  console.log(t);
-  console.log(opts);
+  t.board("customFields", "labels")
+  .then((board) => {
+    t.cards("id", "customFieldItems", "labels")
+    .then((cards) => {
+
+      const cardsStatus = cards.map((item) => {
+        const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
+        const today = nextAction != "null" ? nextAction < tomorrow() : false;
+        const labelToday = item.labels ? item.labels.filter(i => i.name === "today").length > 0 : false;
+        const addLabel = today && !labelToday;
+        const deleteLabel = !today && labelToday;
+        return {
+          id: item.id,
+          addLabel: addLabel,
+          removeLabel: removeLabel
+        }
+      });
+
+      const cardsToChange = cardsStatus.filter(item => item.addLabel || item.removeLabel);
+      console.log(cardsToChange);
+
+      if  (cardsToChange.length > 0) {
+
+      }
+
+    })
+  })
 
 }
 
