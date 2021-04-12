@@ -1,3 +1,5 @@
+const { response } = require("express");
+
 /* global TrelloPowerUp */
 var Promise = TrelloPowerUp.Promise;
 
@@ -118,6 +120,10 @@ const sortPriorityCallback = (t, opts) => {
   })
 }
 
+const todayResponse = (response) => {
+  console.log(response);
+}
+
 const onTodayClick = (t, opts) => {
 
   const tomorrow = () => {
@@ -128,31 +134,67 @@ const onTodayClick = (t, opts) => {
 
   t.board("customFields", "labels")
   .then((board) => {
-    t.cards("id", "customFieldItems", "labels")
-    .then((cards) => {
+    const lblToday = board.labels.filter(i => i.name === "today")[0];
+    t.lists("id","name")
+    .then((lists) => {
+      const doneList = lists.filter(i => i.name === "Done");
+      t.cards("id", "idList", "customFieldItems", "labels")
+      .then((cards) => {
+  
+        const cardsStatus = cards.map((item) => {
+          const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
+          const today = nextAction != "null" ? new Date(nextAction) < tomorrow() : false;
+          const labelToday = item.labels ? item.labels.filter(i => i.name === "today").length > 0 : false;
+          const addLabel = today && !labelToday;
+          const deleteLabel = !today && labelToday;
+          if (doneList[0]) {
+            if (item.idList === doneList[0].idList) {
+              addLabel = false;
+              deleteLabel = false;
+            }
+          }
+          return {
+            id: item.id,
+            addLabel: addLabel,
+            deleteLabel: deleteLabel
+          }
+        });
+  
+        const cardsToChange = cardsStatus.filter(item => item.addLabel || item.deleteLabel);
+        console.log(cardsToChange);
+  
+        if  (cardsToChange.length > 0) {
+  
+          t.getRestApi()
+            .getToken()
+            .then((token) => {
+  
+              if (token) {
 
-      const cardsStatus = cards.map((item) => {
-        const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
-        const today = nextAction != "null" ? new Date(nextAction) < tomorrow() : false;
-        const labelToday = item.labels ? item.labels.filter(i => i.name === "today").length > 0 : false;
-        const addLabel = today && !labelToday;
-        const deleteLabel = !today && labelToday;
-        return {
-          id: item.id,
-          addLabel: addLabel,
-          deleteLabel: deleteLabel
+                cardsToChange.map((item) => {
+
+                  if (item.addLabel) {
+                    console.log("POST");
+                    window.Trello.post(`card/${item.id}/idLabels/${lblToday}`, null, todayResponse, todayResponse);
+                  } else if (item.deleteLabel) {
+                    console.log("DELETE");
+                    window.Trello.delete(`card/${item.id}/idLabels/${lblToday}`, null, todayResponse, todayResponse);
+                  };
+
+                });
+
+              } else {
+                t.alert("Not authorized!");
+              }
+  
+            })
+          
         }
-      });
-
-      const cardsToChange = cardsStatus.filter(item => item.addLabel || item.deleteLabel);
-      console.log(cardsToChange);
-
-      if  (cardsToChange.length > 0) {
-
-      }
-
+  
+      })
     })
-  })
+  
+    })
 
 }
 
