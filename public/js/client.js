@@ -173,10 +173,10 @@ const onTodayClick = (t, opts) => {
 
                   if (item.addLabel) {
                     console.log("POST");
-                    window.Trello.post(`card/${item.id}/idLabels/${lblToday}`, null, todayResponse, todayResponse);
+                    window.Trello.post(`card/${item.id}/idLabels/${lblToday.id}`, null, todayResponse, todayResponse);
                   } else if (item.deleteLabel) {
                     console.log("DELETE");
-                    window.Trello.delete(`card/${item.id}/idLabels/${lblToday}`, null, todayResponse, todayResponse);
+                    window.Trello.delete(`card/${item.id}/idLabels/${lblToday.id}`, null, todayResponse, todayResponse);
                   };
 
                 });
