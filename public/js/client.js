@@ -168,12 +168,13 @@ const onTodayClick = (t, opts) => {
             .then((token) => {
   
               if (token) {
+                window.Trello.setToken(token);
 
                 cardsToChange.map((item) => {
 
                   if (item.addLabel) {
                     console.log("POST");
-                    window.Trello.post(`cards/${item.id}/idLabels/${lblToday.id}`, null, todayResponse, todayResponse);
+                    window.Trello.post(`cards/${item.id}/idLabels/?value=${lblToday.id}`, null, todayResponse, todayResponse);
                   } else if (item.deleteLabel) {
                     console.log("DELETE");
                     window.Trello.delete(`cards/${item.id}/idLabels/${lblToday.id}`, null, todayResponse, todayResponse);
