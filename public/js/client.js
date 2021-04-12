@@ -1,5 +1,3 @@
-const { response } = require("express");
-
 /* global TrelloPowerUp */
 var Promise = TrelloPowerUp.Promise;
 
