@@ -135,7 +135,8 @@ const onTodayClick = (t, opts) => {
     const lblToday = board.labels.filter(i => i.name === "today")[0];
     t.lists("id","name")
     .then((lists) => {
-      const doneList = lists.filter(i => i.name === "Done");
+      let doneList = lists.filter(i => i.name === "Done")[0];
+      doneList = doneList ? doneList.id : "";
       t.cards("id", "idList", "customFieldItems", "labels")
       .then((cards) => {
   
@@ -143,14 +144,8 @@ const onTodayClick = (t, opts) => {
           const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
           const today = nextAction != "null" ? new Date(nextAction) < tomorrow() : false;
           const labelToday = item.labels ? item.labels.filter(i => i.name === "today").length > 0 : false;
-          const addLabel = today && !labelToday;
-          const deleteLabel = !today && labelToday;
-          if (doneList[0]) {
-            if (item.idList === doneList[0].id) {
-              addLabel = false;
-              deleteLabel = labelToday ? true : false;
-            }
-          }
+          const addLabel = today && !labelToday && item.idList != doneList;
+          const deleteLabel = (!today && labelToday) || item.idList === doneList;
           return {
             id: item.id,
             addLabel: addLabel,
