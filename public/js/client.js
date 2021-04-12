@@ -146,9 +146,9 @@ const onTodayClick = (t, opts) => {
           const addLabel = today && !labelToday;
           const deleteLabel = !today && labelToday;
           if (doneList[0]) {
-            if (item.idList === doneList[0].idList) {
+            if (item.idList === doneList[0].id) {
               addLabel = false;
-              deleteLabel = false;
+              deleteLabel = labelToday ? true : false;
             }
           }
           return {
