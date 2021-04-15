@@ -224,7 +224,7 @@ const getBadges = (t) => {
 
         return [{
           text: `Next action: ${printNext}`,
-          color: color
+          color: color(next, now)
         }];
   
       } else {
