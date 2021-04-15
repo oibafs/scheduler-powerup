@@ -198,7 +198,7 @@ const getBadges = (t) => {
   .then((board) => {
     return t.card("customFieldItems")
     .then((card) => {
-      const nextAction = fieldValue(board.customFields, item.customFields, "Next action");
+      const nextAction = fieldValue(board.customFields, card.customFields, "Next action");
       
       return [{
         text: `Next action: ${nextAction}`,
