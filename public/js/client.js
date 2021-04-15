@@ -1,3 +1,5 @@
+const { text } = require("express");
+
 /* global TrelloPowerUp */
 var Promise = TrelloPowerUp.Promise;
 
@@ -192,6 +194,23 @@ const onTodayClick = (t, opts) => {
 
 }
 
+const getBadges = (t) => {
+
+  return t.board("customFields")
+  .then((board) => {
+    return t.card("customFieldItems")
+    .then((card) => {
+      const nextAction = fieldValue(board.customFields, item.customFields, "Next action");
+      
+      return [{
+        text: `Next action: ${nextAction}`,
+        color: "red"
+      }];
+
+    })
+  })
+    
+}
 
 TrelloPowerUp.initialize({
   // Start adding handlers for your capabilities here!
@@ -237,6 +256,9 @@ TrelloPowerUp.initialize({
       callback: onTodayClick,
       condition: 'edit'
     }];
+  },
+  'card-badges': (t, opts) => {
+    return getBadges(t);
   }
 }, {
   // appKey: 'your_key_here',
