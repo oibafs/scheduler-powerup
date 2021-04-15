@@ -199,12 +199,38 @@ const getBadges = (t) => {
     return t.card("customFieldItems")
     .then((card) => {
       const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
-      
-      return [{
-        text: `Next action: ${nextAction}`,
-        color: "red"
-      }];
 
+      if (nextAction != "null") {
+        const next = new Date(nextAction);
+        const now = new Date();
+
+        const color = (next, now) => {
+          if (next < now) {
+            return "red";
+          } else if (next.getDate() === now.getDate()) {
+            return "yellow";
+          } else {
+            return null;
+          }
+        }
+
+        const printNext = Intl.DateTimeFormat("default", {
+          year: 'numeric',
+          month: 'numeric',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric'
+        }).format(next);
+
+        return [{
+          text: `Next action: ${printNext}`,
+          color: color
+        }];
+  
+      } else {
+        return [];
+      }
+      
     })
   })
     
