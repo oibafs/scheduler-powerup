@@ -36,11 +36,11 @@ const daysUntilRepeat = (originalDate, recurring, recPeriod) => {
 const setDaysPostponable = (daysPostponable, priority, recurring) => {
   let days;
 
-  if(daysPostponable) {
+  if (daysPostponable) {
     days = parseInt(daysPostponable);
   } else {
 
-    switch(priority) {
+    switch (priority) {
 
       case "Urgent":
         days = 1;
@@ -79,12 +79,12 @@ const addDays = (originalDate, daysToAdd, actionDays, today) => {
   let i = 0;
 
   do {
-    i ++;
+    i++;
 
     futureDay.setUTCDate(futureDay.getUTCDate() + 1);
     let dayOfWeek = futureDay.getUTCDay();
 
-    switch(actionDays) {
+    switch (actionDays) {
 
       case "Workdays":
 
@@ -92,7 +92,7 @@ const addDays = (originalDate, daysToAdd, actionDays, today) => {
           futureDay.setUTCDate(futureDay.getUTCDate() + 1);
           dayOfWeek = futureDay.getUTCDay();
         };
-    
+
         break;
 
       case "Weekends":
@@ -112,7 +112,7 @@ const addDays = (originalDate, daysToAdd, actionDays, today) => {
         };
 
         break;
-          
+
       default:
         break;
 
@@ -127,18 +127,45 @@ const addDays = (originalDate, daysToAdd, actionDays, today) => {
 // Calculate dates to postpone card
 const postponeByRules = (json) => {
   let putJson = {};
+  putJson.customFields = [];
+  putJson.checkListItems = [];
 
-  // 1. checklist overdue -> due + postponable (consider action days): if still overdue => today
+  // 1. next action < now: next action + days postponable -> still < now: +1 day until > now
   const actionDays = json.customFields["Action days"] ? json.customFields["Action days"] : "Any day";
   const recPeriod = json.customFields["Recurring period"] ? json.customFields["Recurring period"] : "days";
   const today = new Date();
+  let nextAction;
   let earlierDate;
   let laterDate;
-  putJson.checkListItems = [];
 
-  for (let i = 0; i < json.checkListItems.length; i ++) {
+  if (json.customField["Next action"]) {
+    nextAction = new Date(json.customField["Next action"]);
+
+    if (nextAction < today) {
+      const recurring = daysUntilRepeat(nextAction, json.customFields.Recurring ? parseInt(json.customFields.Recurring) : 0, recPeriod);
+      const daysPostponable = setDaysPostponable(json.customFields["Days postponable"], json.customFields.Priority, recurring);
+      nextAction = addDays(nextAction, daysPostponable, actionDays, today);
+      laterDate = nextAction;
+
+      json.customFields["Next action"] = nextAction;
+
+      putJson.customFields.push({
+        idCustomField: json.customFields["idCustomFieldNext action"],
+        body: {
+          value: {
+            date: JSON.parse(JSON.stringify(json.customFields["Next action"]))
+          }
+        }
+      });
+
+    }
+
+  }
+
+  // 2. check lists < now: next action + days postponable -> still < now: +1 day until > now
+  for (let i = 0; i < json.checkListItems.length; i++) {
     let dueDate = new Date(json.checkListItems[i].due);
-  
+
     if (dueDate < today) {
       const recurring = daysUntilRepeat(dueDate, json.customFields.Recurring ? parseInt(json.customFields.Recurring) : 0, recPeriod);
       const daysPostponable = setDaysPostponable(json.customFields["Days postponable"], json.customFields.Priority, recurring);
@@ -146,9 +173,9 @@ const postponeByRules = (json) => {
       json.checkListItems[i].due = dueDate;
 
       putJson.checkListItems.push({
-        id : json.checkListItems[i].id,
-        params : {
-          due : JSON.parse(JSON.stringify(dueDate))
+        id: json.checkListItems[i].id,
+        params: {
+          due: JSON.parse(JSON.stringify(dueDate))
         }
       })
     }
@@ -157,73 +184,40 @@ const postponeByRules = (json) => {
     laterDate = (dueDate > laterDate || !laterDate) ? dueDate : laterDate;
   }
 
-  // 2. next action -> same date as earlier checklist item
-  putJson.customFields = [];
+  // 3. due date -> if lower than later date => original date + postponable -> if greater than today + recurring => later date
+  if (json.due) {
+    let due = new Date(json.due);
+    laterDate = laterDate ? laterDate : today;
 
-  if (earlierDate) {
-    let nextAction = earlierDate;
+    if (due < laterDate) {
+      const recurring = daysUntilRepeat(due, json.customFields.Recurring ? parseInt(json.customFields.Recurring) : 0, recPeriod);
+      const daysPostponable = setDaysPostponable(json.customFields["Days postponable"], json.customFields.Priority, recurring);
+      due = addDays(dueDate, daysPostponable, actionDays, today);
+      json.due = due;
 
-    if (JSON.stringify(nextAction) != JSON.stringify(json.customFields["Next action"])) {
-      json.customFields["Next action"] = nextAction;
-
-      putJson.customFields.push({
-        idCustomField : json.customFields["idCustomFieldNext action"],
-        body : {
-          value : {
-            date : JSON.parse(JSON.stringify(json.customFields["Next action"]))
-          }
+      putJson.main = {
+        params: {
+          due: JSON.parse(JSON.stringify(json.due))
         }
-      });
-    
-    };
+      };
 
-  }
-
-  // 3. due date -> if lower than later date => original date + postponable weeks -> if greater than today + recurring => later date
-  let due = new Date(json.due);
-  let nextRecurrent;
-
-  if ((due < laterDate || !json.due) && laterDate) {
-    const recurring = daysUntilRepeat(due, json.customFields.Recurring ? parseInt(json.customFields.Recurring) : 0, recPeriod);
-    const daysPostponable = setDaysPostponable(json.customFields["Days postponable"], json.customFields.Priority, recurring);
-
-    if (!json.due) {
-      due = laterDate;
-    } else {
-      nextRecurrent = (recPeriod === "days") ? addDays(due, recurring, actionDays, due) : new Date(due.setUTCDate(due.getUTCDate() + recurring));
-      due.setUTCDate(due.getUTCDate() + daysPostponable * 7);
-    }
-
-    if (recurring > 0 && nextRecurrent && due > nextRecurrent) {
-      due = nextRecurrent;
     }
 
   }
-
-  if (JSON.stringify(due) != JSON.stringify(json.due)) {
-    json.due = due;
-
-    putJson.main = {
-      params : {
-        due : JSON.parse(JSON.stringify(json.due))
-      }
-    };
-  
-  };
 
   return putJson;
 }
 
 // Success on putting new due date
 const putDueDateSuccess = (response) => {
-  const newDue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.due));
+  const newDue = new Intl.DateTimeFormat('default', { dateStyle: 'short', timeStyle: 'long' }).format(new Date(response.due));
   $("#response").append(`<sm>Due date: ${newDue}<br></sm>`);
   $("#response").show();
 }
 
 // Success on putting new custom field value
 const putCustomFieldSuccess = (response) => {
-  const newValue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.value.date));
+  const newValue = new Intl.DateTimeFormat('default', { dateStyle: 'short', timeStyle: 'long' }).format(new Date(response.value.date));
   $("#response").append(`<sm>Custom field: ${newValue}<br></sm>`);
   $("#response").show();
 }
@@ -237,10 +231,10 @@ const putCustomFieldFailure = (text) => {
 const postponeCard = (id, token) => {
 
   window.Trello.cards.get(id, {
-      customFields: 'true',
-      customFieldItems: 'true',
-      checklists: 'all'
-    }, getCardSuccess, requestFailure)
+    customFields: 'true',
+    customFieldItems: 'true',
+    checklists: 'all'
+  }, getCardSuccess, requestFailure)
     .then((card) => {
 
       // Calculate new dates
@@ -258,7 +252,7 @@ const postponeCard = (id, token) => {
       }
 
       // Update custom fields
-      for (let i = 0; i < output.customFields.length; i ++) {
+      for (let i = 0; i < output.customFields.length; i++) {
 
         fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${card.id}/customField/${output.customFields[i].idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
           method: 'PUT',
@@ -267,32 +261,32 @@ const postponeCard = (id, token) => {
             'Content-Type': 'application/json'
           }
         })
-        .then(response => response.text()
-        .then(text => {
+          .then(response => response.text()
+            .then(text => {
 
-          if (response.ok) {
-            text = JSON.parse(text);
-            putCustomFieldSuccess(text);
-          } else {
-            putCustomFieldFailure(`Error ${response.status} - ${text}`);
-          }
+              if (response.ok) {
+                text = JSON.parse(text);
+                putCustomFieldSuccess(text);
+              } else {
+                putCustomFieldFailure(`Error ${response.status} - ${text}`);
+              }
 
-        })
-        )
+            })
+          )
 
       }
 
       // Update check list items
-      for (let i = 0; i < output.checkListItems.length; i ++) {
+      for (let i = 0; i < output.checkListItems.length; i++) {
         window.Trello.put(`card/${card.id}/checkItem/${output.checkListItems[i].id}`, output.checkListItems[i].params, putCheckListSuccess, requestFailure);
       }
 
       //Nothing to update
       if (!output.main && output.customFields.length === 0 && output.checkListItems.length === 0) {
         $("#response").append(`<sm>Nothing to update!<br></sm>`);
-        $("#response").show();            
+        $("#response").show();
       }
-      
+
     })
 
 }

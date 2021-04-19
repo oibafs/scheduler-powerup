@@ -5,11 +5,11 @@ var BLACK_ROCKET_ICON = 'https://cdn.glitch.com/1b42d7fe-bda8-4af8-a6c8-eff0cea9
 var WHITE_ICON = 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-white.svg';
 var BLACK_ICON = 'https://cdn.hyperdev.com/us-east-1%3A3d31b21c-01a0-4da2-8827-4bc6e88b7618%2Ficon-black.svg';
 
-var restApiCardButtonCallback = function(t) {
+var restApiCardButtonCallback = function (t) {
 
   return t.getRestApi()
-   .isAuthorized()
-   .then(function(authorized) {
+    .isAuthorized()
+    .then(function (authorized) {
 
       if (!authorized) {
 
@@ -17,7 +17,7 @@ var restApiCardButtonCallback = function(t) {
         // Unfortunately this does not register as a click by the browser, and it will block the popup. Instead, we need to
         // open a t.popup from our capability handler, and load an iframe that contains a button that calls client.authorize.
         return t.popup({
-          title: 'Authorize Trello\'s REST API',   
+          title: "Authorize Trello's REST API",
           url: './api-client-authorize.html',
         })
 
@@ -28,7 +28,7 @@ var restApiCardButtonCallback = function(t) {
           items: [
             {
               text: 'Postpone card',
-              callback: function(t) {
+              callback: function (t) {
                 return t.popup({
                   title: 'Postpone card',
                   url: './postpone-card.html'
@@ -37,7 +37,7 @@ var restApiCardButtonCallback = function(t) {
             },
             {
               text: 'Equalize dates',
-              callback: function(t) {
+              callback: function (t) {
                 return t.popup({
                   title: 'Equalize dates',
                   url: './equalize-dates.html'
@@ -47,12 +47,12 @@ var restApiCardButtonCallback = function(t) {
             {
               // You can de-authorize the REST API client with a call to .clearToken()
               text: 'Unauthorize',
-              callback: function(t) {
+              callback: function (t) {
                 return t.getRestApi()
                   .clearToken()
-                  .then(function() {
-                    t.alert('You\'ve successfully deauthorized!'); 
-                    t.closePopup(); 
+                  .then(function () {
+                    t.alert('You\'ve successfully deauthorized!');
+                    t.closePopup();
                   })
               }
             }
@@ -61,25 +61,25 @@ var restApiCardButtonCallback = function(t) {
         })
 
       }
-    
+
     });
- 
-  }
+
+}
 
 const fieldValue = (customFields, customFieldItems, name) => {
   try {
     const model = customFields.filter(i => i.name === name)[0];
     const field = customFieldItems.filter(i => i.idCustomField === model.id)[0];
-    switch(model.type) {
-      case("list"):
+    switch (model.type) {
+      case ("list"):
         return model.options.findIndex(i => i.id === field.idValue).toString();
-      case("checkbox"):
+      case ("checkbox"):
         return field.value.checked;
       default:
         return field.value[model.type];
     }
   }
-  catch(err) {
+  catch (err) {
     return "null";
   }
 }
@@ -88,34 +88,34 @@ const sortPriorityCallback = (t, opts) => {
   // Trello will call this if the user clicks on this sort
   // opts.cards contains all card objects in the list
   return t.board("customFields")
-  .then((board) => {
-    
-    const cards = opts.cards.map((item) => {
-      return {
-        id: item.id,
-        sorter: (
-          fieldValue(board.customFields, item.customFieldItems, "Priority") 
-          + fieldValue(board.customFields, item.customFieldItems, "Next action")
-          + item.due
-          + fieldValue(board.customFields, item.customFieldItems, "Start date"))
-      }
-    })
+    .then((board) => {
 
-    const sortedCards = cards.sort(
-      (a, b) => {
-        if (a.sorter > b.sorter) {
-          return 1;
-        } else if (b.sorter > a.sorter) {
-          return -1;
+      const cards = opts.cards.map((item) => {
+        return {
+          id: item.id,
+          sorter: (
+            fieldValue(board.customFields, item.customFieldItems, "Priority")
+            + fieldValue(board.customFields, item.customFieldItems, "Next action")
+            + item.due
+            + fieldValue(board.customFields, item.customFieldItems, "Start date"))
         }
-        return 0;
-      });
+      })
 
-    return {
-      sortedIds: sortedCards.map(function (c) { return c.id; })
-    };
+      const sortedCards = cards.sort(
+        (a, b) => {
+          if (a.sorter > b.sorter) {
+            return 1;
+          } else if (b.sorter > a.sorter) {
+            return -1;
+          }
+          return 0;
+        });
 
-  })
+      return {
+        sortedIds: sortedCards.map(function (c) { return c.id; })
+      };
+
+    })
 }
 
 const todayResponse = (response) => {
@@ -126,68 +126,68 @@ const onTodayClick = (t, opts) => {
 
   const tomorrow = () => {
     const today = new Date();
-    const midNight = new Date(today.setHours(0,0,0,0));
+    const midNight = new Date(today.setHours(0, 0, 0, 0));
     return new Date(midNight.setDate(midNight.getDate() + 1));
   }
 
   t.board("customFields", "labels")
-  .then((board) => {
-    const lblToday = board.labels.filter(i => i.name === "today")[0];
-    t.lists("id","name")
-    .then((lists) => {
-      let doneList = lists.filter(i => i.name === "Done")[0];
-      doneList = doneList ? doneList.id : "";
-      t.cards("id", "idList", "customFieldItems", "labels")
-      .then((cards) => {
-  
-        const cardsStatus = cards.map((item) => {
-          const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
-          const today = nextAction != "null" ? new Date(nextAction) < tomorrow() : false;
-          const labelToday = item.labels ? item.labels.filter(i => i.name === "today").length > 0 : false;
-          const addLabel = today && !labelToday && item.idList != doneList;
-          const deleteLabel = (!today && labelToday) || item.idList === doneList;
-          return {
-            id: item.id,
-            addLabel: addLabel,
-            deleteLabel: deleteLabel
-          }
-        });
-  
-        const cardsToChange = cardsStatus.filter(item => item.addLabel || item.deleteLabel);
-        console.log(cardsToChange);
-  
-        if  (cardsToChange.length > 0) {
-  
-          t.getRestApi()
-            .getToken()
-            .then((token) => {
-  
-              if (token) {
-                window.Trello.setToken(token);
+    .then((board) => {
+      const lblToday = board.labels.filter(i => i.name === "today")[0];
+      t.lists("id", "name")
+        .then((lists) => {
+          let doneList = lists.filter(i => i.name === "Done")[0];
+          doneList = doneList ? doneList.id : "";
+          t.cards("id", "idList", "customFieldItems", "labels")
+            .then((cards) => {
 
-                cardsToChange.map((item) => {
+              const cardsStatus = cards.map((item) => {
+                const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
+                const today = nextAction != "null" ? new Date(nextAction) < tomorrow() : false;
+                const labelToday = item.labels ? item.labels.filter(i => i.name === "today").length > 0 : false;
+                const addLabel = today && !labelToday && item.idList != doneList;
+                const deleteLabel = (!today && labelToday) || item.idList === doneList;
+                return {
+                  id: item.id,
+                  addLabel: addLabel,
+                  deleteLabel: deleteLabel
+                }
+              });
 
-                  if (item.addLabel) {
-                    console.log("POST");
-                    window.Trello.post(`cards/${item.id}/idLabels/?value=${lblToday.id}`, null, todayResponse, todayResponse);
-                  } else if (item.deleteLabel) {
-                    console.log("DELETE");
-                    window.Trello.delete(`cards/${item.id}/idLabels/${lblToday.id}`, null, todayResponse, todayResponse);
-                  };
+              const cardsToChange = cardsStatus.filter(item => item.addLabel || item.deleteLabel);
+              console.log(cardsToChange);
 
-                });
+              if (cardsToChange.length > 0) {
 
-              } else {
-                t.alert("Not authorized!");
+                t.getRestApi()
+                  .getToken()
+                  .then((token) => {
+
+                    if (token) {
+                      window.Trello.setToken(token);
+
+                      cardsToChange.map((item) => {
+
+                        if (item.addLabel) {
+                          console.log("POST");
+                          window.Trello.post(`cards/${item.id}/idLabels/?value=${lblToday.id}`, null, todayResponse, todayResponse);
+                        } else if (item.deleteLabel) {
+                          console.log("DELETE");
+                          window.Trello.delete(`cards/${item.id}/idLabels/${lblToday.id}`, null, todayResponse, todayResponse);
+                        };
+
+                      });
+
+                    } else {
+                      t.alert("Not authorized!");
+                    }
+
+                  })
+
               }
-  
+
             })
-          
-        }
-  
-      })
-    })
-  
+        })
+
     })
 
 }
@@ -195,65 +195,65 @@ const onTodayClick = (t, opts) => {
 const getBadges = (t) => {
 
   return t.board("customFields")
-  .then((board) => {
-    return t.card("customFieldItems")
-    .then((card) => {
-      const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
+    .then((board) => {
+      return t.card("customFieldItems")
+        .then((card) => {
+          const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
 
-      if (nextAction != "null") {
-        const next = new Date(nextAction);
-        const now = new Date();
+          if (nextAction != "null") {
+            const next = new Date(nextAction);
+            const now = new Date();
 
-        const color = (next, now) => {
-          if (next < now) {
-            return "red";
-          } else if (next.getDate() === now.getDate()) {
-            return "yellow";
+            const color = (next, now) => {
+              if (next < now) {
+                return "red";
+              } else if (next.getDate() === now.getDate()) {
+                return "yellow";
+              } else {
+                return null;
+              }
+            }
+
+            const printNext = Intl.DateTimeFormat("default", {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric'
+            }).format(next);
+
+            return [{
+              text: `Next action: ${printNext}`,
+              color: color(next, now)
+            }];
+
           } else {
-            return null;
+            return [];
           }
-        }
 
-        const printNext = Intl.DateTimeFormat("default", {
-          year: 'numeric',
-          month: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric'
-        }).format(next);
-
-        return [{
-          text: `Next action: ${printNext}`,
-          color: color(next, now)
-        }];
-  
-      } else {
-        return [];
-      }
-      
+        })
     })
-  })
-    
+
 }
 
 TrelloPowerUp.initialize({
   // Start adding handlers for your capabilities here!
-	// 'card-buttons': function(t, options) {
-	// return t.set("member", "shared", "hello", "world")
-	// .then(function(){
-	// 	  return [{
-	// icon: BLACK_ROCKET_ICON,
-	// 		  text: 'Estimate Size',
-	//       callback: function(t) {
-	//         return t.popup({
-	//           title: "Estimation",
-	//           url: 'estimate.html',
-	//         });
-	//       }
-	// 	  }];
-	// })
-	// },
-  'card-buttons': function(t, options) {
+  // 'card-buttons': function(t, options) {
+  // return t.set("member", "shared", "hello", "world")
+  // .then(function(){
+  // 	  return [{
+  // icon: BLACK_ROCKET_ICON,
+  // 		  text: 'Estimate Size',
+  //       callback: function(t) {
+  //         return t.popup({
+  //           title: "Estimation",
+  //           url: 'estimate.html',
+  //         });
+  //       }
+  // 	  }];
+  // })
+  // },
+  'card-buttons': function (t, options) {
     return [{
       icon: BLACK_ROCKET_ICON,
       text: 'Scheduler',
@@ -262,12 +262,12 @@ TrelloPowerUp.initialize({
   },
   'list-sorters': function (t) {
     return t.list('name', 'id')
-    .then(function (list) {
-      return [{
-        text: "Priority",
-        callback: sortPriorityCallback
-      }];
-    });
+      .then(function (list) {
+        return [{
+          text: "Priority",
+          callback: sortPriorityCallback
+        }];
+      });
   },
   'board-buttons': function (t, opts) {
     return [{
