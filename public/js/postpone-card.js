@@ -138,8 +138,8 @@ const postponeByRules = (json) => {
   let earlierDate;
   let laterDate;
 
-  if (json.customField["Next action"]) {
-    nextAction = new Date(json.customField["Next action"]);
+  if (json.customFields["Next action"]) {
+    nextAction = new Date(json.customFields["Next action"]);
 
     if (nextAction < today) {
       const recurring = daysUntilRepeat(nextAction, json.customFields.Recurring ? parseInt(json.customFields.Recurring) : 0, recPeriod);
