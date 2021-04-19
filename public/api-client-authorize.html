@@ -1,72 +1,73 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Authorize</title>
-    <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
-    
-  </head>
-  <body>
-    
-    <button type="button" class="mod-primary">Click to authorize</button>
-    
-    <!-- We'll use this code block to show the response from the Trello API -->
-    <code id="codeBlock">
+
+<head>
+  <meta charset="utf-8">
+  <title>Authorize</title>
+  <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+
+</head>
+
+<body>
+
+  <button type="button" class="mod-primary">Click to authorize</button>
+
+  <!-- We'll use this code block to show the response from the Trello API -->
+  <code id="codeBlock">
     </code>
 
-    
-    <!-- 
+
+  <!-- 
       We're going to use client.js to help us make requests to Trello's API.
       client.js is not the same as the client library for Power-Up's. client.js
       is a helper library that is a wrapper for the API. It relies on jquery's
       XHR methods, so we need to bring in jquery first
     -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-    
-    <!-- Don't forget to add your API key into the script tag for client.js! -->
-    <script src="https://trello.com/1/client.js?key=039f30a96f8f3e440addc095dd42f87d"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
-    <!-- And because we're ALSO doing Power-Up-related things, we still need the Power-Up client library -->
-    <script src="https://p.trellocdn.com/power-up.min.js"></script>
-    
-    <script>
-    
-      $(document).ready(function() {
-        
-        $("code").hide();
-        
-        // Initialize the Power-Up client library and include your app name and API key
-        var t = window.TrelloPowerUp.iframe({
-          appKey: '039f30a96f8f3e440addc095dd42f87d',
-          appName: 'Scheduler'
-        });
+  <!-- Don't forget to add your API key into the script tag for client.js! -->
+  <script src="https://trello.com/1/client.js?key=039f30a96f8f3e440addc095dd42f87d"></script>
 
-        t.getRestApi()
-          .getToken()
-          .then((token) => {
+  <!-- And because we're ALSO doing Power-Up-related things, we still need the Power-Up client library -->
+  <script src="https://p.trellocdn.com/power-up.min.js"></script>
 
-            if (!token) { 
+  <script>
 
-              document.querySelector('button').addEventListener('click', function() {
-                t.getRestApi()
-                  .authorize({ 
-                    scope: {
-                      read: 'true',
-                      write: 'true' 
-                    }, 
-                    expiration: 'never' })
-                    .then(function() {
-                      t.closePopup();
-                      alert('Successfully authorized')
-                    });
-              });
+    $(document).ready(function () {
 
-            } else {
-              t.closePopup();
-              alert('Already authorized');
-            }
-          });
+      $("code").hide();
+
+      // Initialize the Power-Up client library and include your app name and API key
+      var t = window.TrelloPowerUp.iframe({
+        appKey: '039f30a96f8f3e440addc095dd42f87d',
+        appName: 'Scheduler'
       });
-    </script>
-  </body>
+
+      t.getRestApi()
+        .getToken()
+        .then((token) => {
+
+          if (!token) {
+
+            document.querySelector('button').addEventListener('click', function () {
+              t.getRestApi()
+                .authorize({
+                  scope: 'read,write',
+                  expiration: 'never'
+                })
+                .then(function () {
+                  t.closePopup();
+                  alert('Successfully authorized')
+                });
+            });
+
+          } else {
+            t.closePopup();
+            alert('Already authorized');
+          }
+        });
+    });
+  </script>
+</body>
+
 </html>
