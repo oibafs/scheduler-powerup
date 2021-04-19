@@ -192,7 +192,7 @@ const postponeByRules = (json) => {
     if (due < laterDate) {
       const recurring = daysUntilRepeat(due, json.customFields.Recurring ? parseInt(json.customFields.Recurring) : 0, recPeriod);
       const daysPostponable = setDaysPostponable(json.customFields["Days postponable"], json.customFields.Priority, recurring);
-      due = addDays(dueDate, daysPostponable, actionDays, today);
+      due = addDays(due, daysPostponable, actionDays, today);
       json.due = due;
 
       putJson.main = {
