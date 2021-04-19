@@ -1,5 +1,5 @@
 // Success on getting a card
-const getCardSuccess = () => {}
+const getCardSuccess = () => { }
 
 // Failure on put request
 const requestFailure = (response) => {
@@ -11,7 +11,7 @@ const getCustomFields = (items, fieldsModel) => {
   let json = {};
 
   // Process custom field items
-  for (let i = 0; i < items.length; i ++) {
+  for (let i = 0; i < items.length; i++) {
 
     // Find custom field model
     const model = fieldsModel.filter(model => model.id == items[i].idCustomField);
@@ -34,12 +34,12 @@ const getCustomFields = (items, fieldsModel) => {
   }
 
   // Get custom field ids and values
-  for (let i = 0; i < fieldsModel.length; i ++) {
+  for (let i = 0; i < fieldsModel.length; i++) {
     const name = fieldsModel[i].name;
     const customFieldId = "idCustomField" + name;
     json[customFieldId] = fieldsModel[i].id;
 
-    for (let j = 0; j < (fieldsModel[i].options ? fieldsModel[i].options.length : 0); j ++) {
+    for (let j = 0; j < (fieldsModel[i].options ? fieldsModel[i].options.length : 0); j++) {
       const idValue = fieldsModel[i].options[j].id;
       const value = fieldsModel[i].options[j].value.text;
       const customFieldIdValue = "idCustomFieldValue" + name + value;
@@ -56,20 +56,20 @@ const getCheckListItems = (checkLists, complete) => {
   let jsonItems = [];
 
   // Process check lists
-  for(let i = 0; i < checkLists.length; i ++) {
+  for (let i = 0; i < checkLists.length; i++) {
 
     // Process check list items
-    for(let j = 0; j < checkLists[i].checkItems.length; j ++) {
+    for (let j = 0; j < checkLists[i].checkItems.length; j++) {
 
       // Items incomplete and with due date
-      if((checkLists[i].checkItems[j].state === "incomplete" || complete) && checkLists[i].checkItems[j].due) {
+      if ((checkLists[i].checkItems[j].state === "incomplete" || complete) && checkLists[i].checkItems[j].due) {
 
         jsonItems.push({
           id: checkLists[i].checkItems[j].id,
           name: checkLists[i].checkItems[j].name,
           due: checkLists[i].checkItems[j].due,
         });
-        
+
       }
 
     }
@@ -81,7 +81,19 @@ const getCheckListItems = (checkLists, complete) => {
 
 // Success on putting new check list item due date
 const putCheckListSuccess = (response) => {
-  const newDue = new Intl.DateTimeFormat('default', {dateStyle: 'short', timeStyle: 'long'}).format(new Date(response.due));
+  const newDue = new Intl.DateTimeFormat('default', { dateStyle: 'short', timeStyle: 'long' }).format(new Date(response.due));
   $("#response").append(`<sm>${response.name}: ${newDue}<br></sm>`);
   $("#response").show();
+}
+
+// Success on putting new custom field value
+const putCustomFieldSuccess = (response) => {
+  const newValue = new Intl.DateTimeFormat('default', { dateStyle: 'short', timeStyle: 'long' }).format(new Date(response.value.date));
+  $("#response").append(`<sm>Custom field: ${newValue}<br></sm>`);
+  $("#response").show();
+}
+
+// Failure on putting new custom field value
+const putCustomFieldFailure = (text) => {
+  $("#response").append(`<sm><red>${text}<br></red></sm>`);
 }
