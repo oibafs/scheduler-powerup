@@ -36,11 +36,20 @@ var restApiCardButtonCallback = function (t) {
               }
             },
             {
-              text: 'Equalize dates',
+              text: 'Next action -> Check list',
               callback: function (t) {
                 return t.popup({
-                  title: 'Equalize dates',
+                  title: 'Next action -> Check list',
                   url: './equalize-dates.html'
+                })
+              }
+            },
+            {
+              text: 'Check list -> Next action',
+              callback: function (t) {
+                return t.popup({
+                  title: 'Check list -> Next action',
+                  url: './checklist-next-action.html'
                 })
               }
             },
