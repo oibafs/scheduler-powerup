@@ -307,7 +307,7 @@ const onImportanceClick = (t, opts) => {
 
                         const body = {
                           "value": {
-                            "number": item.newImportance,
+                            "number": item.newImportance.toString(),
                           }
                         };
 
