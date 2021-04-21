@@ -212,7 +212,7 @@ const onImportanceClick = (t, opts) => {
           let doneList = lists.filter(i => i.name === "Done")[0];
           doneList = doneList ? doneList.id : "";
 
-          t.cards("id", "idList", "customFieldItems", "labels")
+          t.cards("id", "idList", "due", "customFieldItems", "labels")
             .then((cards) => {
 
               const cardsImportance = cards.map((item) => {
@@ -225,15 +225,15 @@ const onImportanceClick = (t, opts) => {
                 let newImportance = 2;
 
                 switch (priority) {
-                  case "Urgent":
+                  case "0":
                     newImportance += 3;
                     break;
 
-                  case "Important":
+                  case "1":
                     newImportance += 2;
                     break;
 
-                  case "Medium":
+                  case "2":
                     newImportance += 1;
                     break;
 
@@ -265,13 +265,14 @@ const onImportanceClick = (t, opts) => {
                   newImportance += 1;
                 }
 
-                newImportance += (category === "Work") ? 1 : 0;
+                newImportance += (category === "3") ? 1 : 0;
 
                 nextAction = (nextAction === "null") ? new Date("2999/12/31") : nextAction;
+                const daysToNextAction = dateDiff(today, nextAction);
 
-                if (nextAction < 0) {
+                if (daysToNextAction < 0) {
                   newImportance += 2;
-                } else if (nextAction < 1) {
+                } else if (daysToNextAction < 1) {
                   newImportance += 1;
                 }
 
@@ -288,7 +289,7 @@ const onImportanceClick = (t, opts) => {
               if (cardsToChange.length > 0) {
 
                 cardsToChange.map((item) => {
-                  console.log(cardsToChange);
+                  console.log(item);
                 })
 
                 /*
