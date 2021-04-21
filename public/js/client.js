@@ -220,7 +220,7 @@ const onImportanceClick = (t, opts) => {
                 const star = item.labels ? item.labels.filter(i => i.name === "star").length > 0 : false;
                 const due = item.due ? new Date(item.due) : new Date("2999/12/31");
                 const category = fieldValue(board.customFields, item.customFieldItems, "Category");
-                let nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
+                let nextAction = new Date(fieldValue(board.customFields, item.customFieldItems, "Next action"));
                 const importance = fieldValue(board.customFields, item.customFieldItems, "Importance");
                 let newImportance = 2;
 
@@ -269,7 +269,7 @@ const onImportanceClick = (t, opts) => {
 
                   newImportance += (category === "3") ? 1 : 0;
 
-                  nextAction = (nextAction === "null") ? new Date("2999/12/31") : nextAction;
+                  nextAction = isNaN(nextAction) ? new Date("2999/12/31") : nextAction;
                   const daysToNextAction = dateDiff(today, nextAction);
 
                   if (daysToNextAction < 0) {
