@@ -224,56 +224,62 @@ const onImportanceClick = (t, opts) => {
                 const importance = fieldValue(board.customFields, item.customFieldItems, "Importance");
                 let newImportance = 2;
 
-                switch (priority) {
-                  case "0":
+                if (item.list != doneList) {
+
+                  switch (priority) {
+                    case "0":
+                      newImportance += 3;
+                      break;
+
+                    case "1":
+                      newImportance += 2;
+                      break;
+
+                    case "2":
+                      newImportance += 1;
+                      break;
+
+                    default:
+                      break;
+                  }
+
+                  newImportance += star ? 1 : 0;
+
+                  const today = new Date();
+
+                  // Calculate difference between two dates in days
+                  const dateDiff = (originalDate, futureDate) => {
+                    const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+                    return Math.floor((futureDate - originalDate) / _MS_PER_DAY);
+                  }
+
+                  const daysToDue = dateDiff(today, due);
+
+                  if (daysToDue < 0) {
+                    newImportance += 6;
+                  } else if (daysToDue < 1) {
+                    newImportance += 5;
+                  } else if (daysToDue < 2) {
                     newImportance += 3;
-                    break;
-
-                  case "1":
+                  } else if (daysToDue < 7) {
                     newImportance += 2;
-                    break;
-
-                  case "2":
+                  } else if (daysToDue < 14) {
                     newImportance += 1;
-                    break;
+                  }
 
-                  default:
-                    break;
-                }
+                  newImportance += (category === "3") ? 1 : 0;
 
-                newImportance += star ? 1 : 0;
+                  nextAction = (nextAction === "null") ? new Date("2999/12/31") : nextAction;
+                  const daysToNextAction = dateDiff(today, nextAction);
 
-                const today = new Date();
+                  if (daysToNextAction < 0) {
+                    newImportance += 2;
+                  } else if (daysToNextAction < 1) {
+                    newImportance += 1;
+                  }
 
-                // Calculate difference between two dates in days
-                const dateDiff = (originalDate, futureDate) => {
-                  const _MS_PER_DAY = 1000 * 60 * 60 * 24;
-                  return Math.floor((futureDate - originalDate) / _MS_PER_DAY);
-                }
-
-                const daysToDue = dateDiff(today, due);
-
-                if (daysToDue < 0) {
-                  newImportance += 6;
-                } else if (daysToDue < 1) {
-                  newImportance += 5;
-                } else if (daysToDue < 2) {
-                  newImportance += 3;
-                } else if (daysToDue < 7) {
-                  newImportance += 2;
-                } else if (daysToDue < 14) {
-                  newImportance += 1;
-                }
-
-                newImportance += (category === "3") ? 1 : 0;
-
-                nextAction = (nextAction === "null") ? new Date("2999/12/31") : nextAction;
-                const daysToNextAction = dateDiff(today, nextAction);
-
-                if (daysToNextAction < 0) {
-                  newImportance += 2;
-                } else if (daysToNextAction < 1) {
-                  newImportance += 1;
+                } else {
+                  newImportance = 0;
                 }
 
                 return {
