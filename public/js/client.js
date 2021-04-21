@@ -127,6 +127,41 @@ const sortPriorityCallback = (t, opts) => {
     })
 }
 
+const sortImportanceCallback = (t, opts) => {
+  // Trello will call this if the user clicks on this sort
+  // opts.cards contains all card objects in the list
+  return t.board("customFields")
+    .then((board) => {
+
+      const cards = opts.cards.map((item) => {
+        return {
+          id: item.id,
+          sorter: (
+            fieldValue(board.customFields, item.customFieldItems, "Importance")
+            + fieldValue(board.customFields, item.customFieldItems, "Priority")
+            + fieldValue(board.customFields, item.customFieldItems, "Next action")
+            + item.due
+            + fieldValue(board.customFields, item.customFieldItems, "Start date"))
+        }
+      })
+
+      const sortedCards = cards.sort(
+        (a, b) => {
+          if (a.sorter > b.sorter) {
+            return 1;
+          } else if (b.sorter > a.sorter) {
+            return -1;
+          }
+          return 0;
+        });
+
+      return {
+        sortedIds: sortedCards.map(function (c) { return c.id; })
+      };
+
+    })
+}
+
 const todayResponse = (response) => {
   console.log(response);
 }
@@ -382,10 +417,17 @@ const getBadges = (t) => {
               minute: 'numeric'
             }).format(next);
 
-            return [{
-              text: `Next action: ${printNext}`,
-              color: color(next, now)
-            }];
+            return [
+              {
+                dynamic: () => {
+                  return {
+                    text: `Next action: ${printNext}`,
+                    color: color(next, now),
+                    refresh: 60,
+                  };
+                }
+              }
+            ];
 
           } else {
             return [];
@@ -423,10 +465,16 @@ TrelloPowerUp.initialize({
   'list-sorters': function (t) {
     return t.list('name', 'id')
       .then(function (list) {
-        return [{
-          text: "Priority",
-          callback: sortPriorityCallback
-        }];
+        return [
+          {
+            text: "Priority",
+            callback: sortPriorityCallback
+          },
+          {
+            text: "Importance",
+            callback: sortImportanceCallback,
+          },
+        ];
       });
   },
   'board-buttons': function (t, opts) {
