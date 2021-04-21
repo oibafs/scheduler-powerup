@@ -293,37 +293,54 @@ const onImportanceClick = (t, opts) => {
               const cardsToChange = cardsImportance.filter(item => item.newImportance != item.importance);
 
               if (cardsToChange.length > 0) {
+                const idCustomField = board.customFields.filter(i => i.name === "Importance")[0].id;
 
-                cardsToChange.map((item) => {
-                  console.log(item);
-                })
+                t.getRestApi()
+                  .getToken()
+                  .then((token) => {
 
-                /*
-                          t.getRestApi()
-                            .getToken()
-                            .then((token) => {
-                
-                              if (token) {
-                                window.Trello.setToken(token);
-                
-                                cardsToChange.map((item) => {
-                
-                                  if (item.addLabel) {
-                                    console.log("POST");
-                                    window.Trello.post(`cards/${item.id}/idLabels/?value=${lblToday.id}`, null, todayResponse, todayResponse);
-                                  } else if (item.deleteLabel) {
-                                    console.log("DELETE");
-                                    window.Trello.delete(`cards/${item.id}/idLabels/${lblToday.id}`, null, todayResponse, todayResponse);
-                                  };
-                
-                                });
-                
+                    if (token) {
+                      window.Trello.setToken(token);
+
+                      cardsToChange.map((item) => {
+                        console.log(item);
+
+                        const body = {
+                          "value": {
+                            "number": item.newImportance,
+                          }
+                        };
+
+                        fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${item.id}/customField/${idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
+                          method: 'PUT',
+                          body: JSON.stringify(body),
+                          headers: {
+                            'Content-Type': 'application/json'
+                          }
+                        })
+                          .then(response => response.text()
+                            .then(text => {
+
+                              if (response.ok) {
+                                text = JSON.parse(text);
+                                //putCustomFieldSuccess(text);
                               } else {
-                                t.alert("Not authorized!");
+                                //putCustomFieldFailure(`Error ${response.status} - ${text}`);
                               }
-                
+                              console.log(response.status);
+
                             })
-                */
+                          )
+
+                      })
+
+                    } else {
+                      t.alert("Not authorized!");
+                    }
+
+                  })
+
+
 
               }
 
