@@ -224,7 +224,7 @@ const onImportanceClick = (t, opts) => {
                 const importance = fieldValue(board.customFields, item.customFieldItems, "Importance");
                 let newImportance = 2;
 
-                if (item.list != doneList) {
+                if (item.idList != doneList) {
 
                   switch (priority) {
                     case "0":
