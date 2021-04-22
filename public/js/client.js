@@ -134,10 +134,12 @@ const sortImportanceCallback = (t, opts) => {
     .then((board) => {
 
       const cards = opts.cards.map((item) => {
+        const importance = fieldValue(board.customFields, item.customFieldItems, "Importance");
+        const sortImportance = (100 - isNaN(parseInt(importance)) ? 90 : importance).toString();
         return {
           id: item.id,
           sorter: (
-            fieldValue(board.customFields, item.customFieldItems, "Importance")
+            sortImportance
             + fieldValue(board.customFields, item.customFieldItems, "Priority")
             + fieldValue(board.customFields, item.customFieldItems, "Next action")
             + item.due
