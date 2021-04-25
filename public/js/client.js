@@ -399,6 +399,7 @@ const getBadges = (t) => {
             {
               dynamic: () => {
                 const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
+                console.log(nextAction);
 
                 if (nextAction != "null") {
                   const next = new Date(nextAction);
@@ -425,7 +426,7 @@ const getBadges = (t) => {
                   return {
                     text: `Next action: ${printNext}`,
                     color: color(next, now),
-                    refresh: 60,
+                    refresh: 10,
                   };
 
                 } else {
