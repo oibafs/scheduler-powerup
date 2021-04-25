@@ -395,49 +395,47 @@ const getBadges = (t) => {
     .then((board) => {
       return t.card("customFieldItems")
         .then((card) => {
-          const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
+          return [
+            {
+              dynamic: () => {
+                const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
 
-          if (nextAction != "null") {
-            const next = new Date(nextAction);
-            const now = new Date();
+                if (nextAction != "null") {
+                  const next = new Date(nextAction);
+                  const now = new Date();
 
-            const color = (next, now) => {
-              if (next < now) {
-                return "red";
-              } else if (next.getDate() === now.getDate()) {
-                return "yellow";
-              } else {
-                return null;
-              }
-            }
+                  const color = (next, now) => {
+                    if (next < now) {
+                      return "red";
+                    } else if (next.getDate() === now.getDate()) {
+                      return "yellow";
+                    } else {
+                      return null;
+                    }
+                  }
 
-            const printNext = Intl.DateTimeFormat("default", {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric'
-            }).format(next);
+                  const printNext = Intl.DateTimeFormat("default", {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric'
+                  }).format(next);
 
-            return [
-              {
-                dynamic: () => {
                   return {
                     text: `Next action: ${printNext}`,
                     color: color(next, now),
                     refresh: 60,
                   };
+
+                } else {
+                  return {};
                 }
               }
-            ];
-
-          } else {
-            return [];
-          }
-
+            }
+          ];
         })
     })
-
 }
 
 TrelloPowerUp.initialize({
