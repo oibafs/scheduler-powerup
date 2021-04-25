@@ -391,13 +391,13 @@ const onImportanceClick = (t, opts) => {
 
 const getBadges = (t) => {
 
-  return t.board("customFields")
-    .then((board) => {
-      return t.card("customFieldItems")
-        .then((card) => {
-          return [
-            {
-              dynamic: () => {
+  return [
+    {
+      dynamic: () => {
+        return t.board("customFields")
+          .then((board) => {
+            return t.card("customFieldItems")
+              .then((card) => {
                 const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
                 console.log(nextAction);
 
@@ -432,11 +432,11 @@ const getBadges = (t) => {
                 } else {
                   return {};
                 }
-              }
-            }
-          ];
-        })
-    })
+              })
+          })
+      }
+    }
+  ];
 }
 
 TrelloPowerUp.initialize({
