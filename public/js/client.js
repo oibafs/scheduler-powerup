@@ -431,7 +431,7 @@ const getBadges = (t) => {
 
                   const color = (next, now) => {
                     const diff = dateDiff(now, next, "hours");
-                    console.log(diff);
+                    console.log(now, next, diff);
                     if (diff > 12) {
                       return null;
                     } else if (dateDiff > 0) {
