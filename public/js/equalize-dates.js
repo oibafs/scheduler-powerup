@@ -18,6 +18,7 @@ const setDates = (json) => {
   putJson.checkListItems = [];
 
   if (json.checkListItems.length > 0) {
+    json.checkListItems.sort((a, b) => (a.due > b.due) ? 1 : ((b.due > a.due) ? -1 : 0));
 
     if (json.customFields["Next action"] && (json.checkListItems[0].due != json.customFields["Next action"])) {
       json.checkListItems[0].due = json.customFields["Next action"];
@@ -63,6 +64,7 @@ const setDatesChecklistNextAction = (json) => {
   putJson.customFields = [];
 
   if (json.checkListItems.length > 0) {
+    json.checkListItems.sort((a, b) => (a.due > b.due) ? 1 : ((b.due > a.due) ? -1 : 0));
 
     if (json.customFields["Next action"] && (json.checkListItems[0].due != json.customFields["Next action"])) {
       json.customFields["Next action"] = json.checkListItems[0].due;
