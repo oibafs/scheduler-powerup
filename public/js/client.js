@@ -431,12 +431,11 @@ const getBadges = (t) => {
 
                   const color = (next, now) => {
                     const diff = dateDiff(now, next, "hours");
-                    console.log(card.name, now, next, diff);
                     if (diff > 12) {
                       return null;
-                    } else if (dateDiff > 0) {
+                    } else if (diff > 0) {
                       return "yellow";
-                    } else if (dateDiff > -12) {
+                    } else if (diff > -12) {
                       return "red";
                     } else {
                       return "pink";
