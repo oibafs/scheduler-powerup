@@ -389,6 +389,31 @@ const onImportanceClick = (t, opts) => {
 
 }
 
+const dateDiff = (originalDate, futureDate, unit) => {
+  let factor = 1;
+  switch (unit) {
+    case "seconds":
+      factor *= 1000;
+      break;
+    case "minutes":
+      factor *= (1000 * 60);
+      break;
+    case "hours":
+      factor *= (1000 * 60 * 60);
+      break;
+    case "days":
+      factor *= (1000 * 60 * 60 * 24);
+      break;
+    case "weeks":
+      factor *= (1000 * 60 * 60 * 24 * 7);
+      break;
+    default:
+      break;
+  }
+
+  return (futureDate - originalDate) / factor;
+}
+
 const getBadges = (t) => {
 
   return [
@@ -399,19 +424,21 @@ const getBadges = (t) => {
             return t.card("customFieldItems")
               .then((card) => {
                 const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
-                console.log(nextAction);
 
                 if (nextAction != "null") {
                   const next = new Date(nextAction);
                   const now = new Date();
 
                   const color = (next, now) => {
-                    if (next < now) {
-                      return "red";
-                    } else if (next.getDate() === now.getDate()) {
-                      return "yellow";
-                    } else {
+                    const diff = dateDiff(now, next, "hours");
+                    if (diff > 12) {
                       return null;
+                    } else if (dateDiff > 0) {
+                      return "yellow";
+                    } else if (dateDiff > -12) {
+                      return "red";
+                    } else {
+                      return "pink";
                     }
                   }
 
