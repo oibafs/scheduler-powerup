@@ -94,7 +94,7 @@ const equalize = (t, token) => {
       window.Trello.setToken(token);
 
       window.Trello.cards.get(card.id, {
-        due,
+        // due,
         customFields: 'true',
         customFieldItems: 'true',
         checklists: 'all'
