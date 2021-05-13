@@ -140,7 +140,6 @@ const checklistNextAction = (t, token) => {
       window.Trello.setToken(token);
 
       window.Trello.cards.get(card.id, {
-        due,
         customFields: 'true',
         customFieldItems: 'true',
         checklists: 'all'
@@ -150,6 +149,7 @@ const checklistNextAction = (t, token) => {
           // Calculate new dates
           let work = {};
           work.start = card.start;
+          work.due = card.due;
           work.customFields = (card.customFieldItems && card.customFields) ? getCustomFields(card.customFieldItems, card.customFields) : {};
           work.checkListItems = card.checklists ? getCheckListItems(card.checklists) : {};
           const output = setDatesChecklistNextAction(work);
