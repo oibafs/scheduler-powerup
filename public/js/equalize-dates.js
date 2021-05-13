@@ -89,12 +89,11 @@ const setDatesChecklistNextAction = (json) => {
 // Equalize dates
 const equalize = (t, token) => {
 
-  t.card('id', 'due')
+  t.card('id')
     .then((card) => {
       window.Trello.setToken(token);
 
       window.Trello.cards.get(card.id, {
-        // due,
         customFields: 'true',
         customFieldItems: 'true',
         checklists: 'all'
@@ -104,6 +103,7 @@ const equalize = (t, token) => {
           // Calculate new dates
           let work = {};
           work.start = card.start;
+          work.due = card.due;
           work.customFields = (card.customFieldItems && card.customFields) ? getCustomFields(card.customFieldItems, card.customFields) : {};
           work.checkListItems = card.checklists ? getCheckListItems(card.checklists) : {};
           const output = setDates(work);
