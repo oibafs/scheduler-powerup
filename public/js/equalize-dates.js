@@ -89,7 +89,7 @@ const setDatesChecklistNextAction = (json) => {
 // Equalize dates
 const equalize = (t, token) => {
 
-  t.card('id')
+  t.card('id', 'due')
     .then((card) => {
       window.Trello.setToken(token);
 
