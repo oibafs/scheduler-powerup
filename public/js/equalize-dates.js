@@ -72,7 +72,7 @@ const setDatesChecklistNextAction = (json) => {
       if (!putJson.main) {
         putJson.main = {
           params: {
-            start: JSON.parse(JSON.stringify(json.due))
+            due: JSON.parse(JSON.stringify(json.due))
           }
         };
       } else {
