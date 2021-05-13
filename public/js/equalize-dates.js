@@ -20,8 +20,8 @@ const setDates = (json) => {
   if (json.checkListItems.length > 0) {
     json.checkListItems.sort((a, b) => (a.due > b.due) ? 1 : ((b.due > a.due) ? -1 : 0));
 
-    if (json.customFields["Next action"] && (json.checkListItems[0].due != json.customFields["Next action"])) {
-      json.checkListItems[0].due = json.customFields["Next action"];
+    if (json.due && (json.checkListItems[0].due != json.due)) {
+      json.checkListItems[0].due = json.due;
 
       putJson.checkListItems.push({
         id: json.checkListItems[0].id,
@@ -66,17 +66,18 @@ const setDatesChecklistNextAction = (json) => {
   if (json.checkListItems.length > 0) {
     json.checkListItems.sort((a, b) => (a.due > b.due) ? 1 : ((b.due > a.due) ? -1 : 0));
 
-    if (json.customFields["Next action"] && (json.checkListItems[0].due != json.customFields["Next action"])) {
-      json.customFields["Next action"] = json.checkListItems[0].due;
+    if (json.due && (json.checkListItems[0].due != json.due)) {
+      json.due = json.checkListItems[0].due;
 
-      putJson.customFields.push({
-        idCustomField: json.customFields["idCustomFieldNext action"],
-        body: {
-          value: {
-            date: JSON.parse(JSON.stringify(json.customFields["Next action"]))
+      if (!putJson.main) {
+        putJson.main = {
+          params: {
+            start: JSON.parse(JSON.stringify(json.due))
           }
-        }
-      });
+        };
+      } else {
+        putJson.main.params.due = JSON.parse(JSON.stringify(json.due));
+      }
 
     }
 
@@ -161,7 +162,8 @@ const checklistNextAction = (t, token) => {
           // Update custom fields
           for (let i = 0; i < output.customFields.length; i++) {
 
-            fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${card.id}/customField/${output.customFields[i].idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
+            // fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${card.id}/customField/${output.customFields[i].idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
+            fetch(`https://scheduler-git-new-webhook-oibafs.vercel.app/api/1/trello/cards/${card.id}/customField/${output.customFields[i].idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
               method: 'PUT',
               body: JSON.stringify(output.customFields[i].body),
               headers: {

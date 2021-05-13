@@ -36,19 +36,19 @@ var restApiCardButtonCallback = function (t) {
               }
             },
             {
-              text: 'Next action -> Check list',
+              text: 'Due date -> Check list',
               callback: function (t) {
                 return t.popup({
-                  title: 'Next action -> Check list',
+                  title: 'Due date -> Check list',
                   url: './equalize-dates.html'
                 })
               }
             },
             {
-              text: 'Check list -> Next action',
+              text: 'Check list -> Due date',
               callback: function (t) {
                 return t.popup({
-                  title: 'Check list -> Next action',
+                  title: 'Check list -> Due date',
                   url: './checklist-next-action.html'
                 })
               }
@@ -104,8 +104,8 @@ const sortPriorityCallback = (t, opts) => {
           id: item.id,
           sorter: (
             fieldValue(board.customFields, item.customFieldItems, "Priority")
-            + fieldValue(board.customFields, item.customFieldItems, "Next action")
             + item.due
+            + fieldValue(board.customFields, item.customFieldItems, "Deadline")
             + fieldValue(board.customFields, item.customFieldItems, "Start date"))
         }
       })
@@ -141,8 +141,8 @@ const sortImportanceCallback = (t, opts) => {
           sorter: (
             sortImportance
             + fieldValue(board.customFields, item.customFieldItems, "Priority")
-            + fieldValue(board.customFields, item.customFieldItems, "Next action")
             + item.due
+            + fieldValue(board.customFields, item.customFieldItems, "Deadline")
             + fieldValue(board.customFields, item.customFieldItems, "Start date"))
         }
       })
@@ -187,8 +187,8 @@ const onTodayClick = (t, opts) => {
             .then((cards) => {
 
               const cardsStatus = cards.map((item) => {
-                const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
-                const today = nextAction != "null" ? new Date(nextAction) < tomorrow() : false;
+                // const nextAction = fieldValue(board.customFields, item.customFieldItems, "Next action");
+                const today = item.due ? new Date(item.due) < tomorrow() : false;
                 const labelToday = item.labels ? item.labels.filter(i => i.name === "today").length > 0 : false;
                 const addLabel = today && !labelToday && item.idList != doneList;
                 const deleteLabel = (!today && labelToday) || item.idList === doneList;
@@ -257,7 +257,7 @@ const onImportanceClick = (t, opts) => {
                 const star = item.labels ? item.labels.filter(i => i.name === "star").length > 0 : false;
                 const due = item.due ? new Date(item.due) : new Date("2999/12/31");
                 const category = fieldValue(board.customFields, item.customFieldItems, "Category");
-                let nextAction = new Date(fieldValue(board.customFields, item.customFieldItems, "Next action"));
+                let nextAction = new Date(fieldValue(board.customFields, item.customFieldItems, "Deadline"));
                 const importance = fieldValue(board.customFields, item.customFieldItems, "Importance");
                 let newImportance = 2;
 
@@ -293,15 +293,9 @@ const onImportanceClick = (t, opts) => {
                   const daysToDue = dateDiff(today, due);
 
                   if (daysToDue < 0) {
-                    newImportance += 6;
-                  } else if (daysToDue < 1) {
-                    newImportance += 5;
-                  } else if (daysToDue < 2) {
                     newImportance += 3;
-                  } else if (daysToDue < 7) {
+                  } else if (daysToDue < 1) {
                     newImportance += 2;
-                  } else if (daysToDue < 14) {
-                    newImportance += 1;
                   }
 
                   newImportance += (category === "3") ? 1 : 0;
@@ -310,8 +304,14 @@ const onImportanceClick = (t, opts) => {
                   const daysToNextAction = dateDiff(today, nextAction);
 
                   if (daysToNextAction < 0) {
-                    newImportance += 2;
+                    newImportance += 6;
                   } else if (daysToNextAction < 1) {
+                    newImportance += 5;
+                  } else if (daysToNextAction < 2) {
+                    newImportance += 3;
+                  } else if (daysToNextAction < 7) {
+                    newImportance += 2;
+                  } else if (daysToNextAction < 14) {
                     newImportance += 1;
                   }
 
@@ -348,7 +348,8 @@ const onImportanceClick = (t, opts) => {
                           }
                         };
 
-                        fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${item.id}/customField/${idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
+                        // fetch(`https://scheduler-ruby.vercel.app/api/1/trello/cards/${item.id}/customField/${idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
+                        fetch(`https://scheduler-git-new-webhook-oibafs.vercel.app/api/1/trello/cards/${item.id}/customField/${idCustomField}/item?key=039f30a96f8f3e440addc095dd42f87d&token=${token}`, {
                           method: 'PUT',
                           body: JSON.stringify(body),
                           headers: {
@@ -423,7 +424,7 @@ const getBadges = (t) => {
           .then((board) => {
             return t.card("customFieldItems")
               .then((card) => {
-                const nextAction = fieldValue(board.customFields, card.customFieldItems, "Next action");
+                const nextAction = fieldValue(board.customFields, card.customFieldItems, "Deadline");
 
                 if (nextAction != "null") {
                   const next = new Date(nextAction);
@@ -451,7 +452,7 @@ const getBadges = (t) => {
                   }).format(next);
 
                   return {
-                    text: `Next action: ${printNext}`,
+                    text: `Deadline: ${printNext}`,
                     color: color(next, now),
                     refresh: 60,
                   };
