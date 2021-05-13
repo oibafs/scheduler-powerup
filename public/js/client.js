@@ -183,7 +183,7 @@ const onTodayClick = (t, opts) => {
         .then((lists) => {
           let doneList = lists.filter(i => i.name === "Done")[0];
           doneList = doneList ? doneList.id : "";
-          t.cards("id", "idList", "customFieldItems", "labels")
+          t.cards("id", "due", "idList", "customFieldItems", "labels")
             .then((cards) => {
 
               const cardsStatus = cards.map((item) => {
