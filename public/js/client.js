@@ -176,6 +176,7 @@ const onTodayClick = (t, opts) => {
     return new Date(midNight.setDate(midNight.getDate() + 1));
   }
 
+
   t.board("customFields", "labels")
     .then((board) => {
       const lblToday = board.labels.filter(i => i.name === "today")[0];
