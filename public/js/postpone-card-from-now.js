@@ -68,17 +68,15 @@ const postponeCardFromNow = (id, token) => {
 
   window.Trello.cards.get(id, {
     customFields: 'true',
-    customFieldItems: 'true',
-    checklists: 'all'
+    customFieldItems: 'true'
   }, getCardSuccess, requestFailure)
     .then((card) => {
 
       // Calculate new dates
       let work = {};
-      work.due = card.due;
+      const now = new Date();
       work.customFields = (card.customFieldItems && card.customFields) ? getCustomFields(card.customFieldItems, card.customFields) : {};
-      work.checkListItems = card.checklists ? getCheckListItems(card.checklists) : {};
-      const newDueDate = addWorkingHours(work.due, work.priority, work.actionDays);
+      const newDueDate = addWorkingHours(now, work.customFields.Priority, work.customFields["Action days"]);
       const params = {
         due: JSON.parse(JSON.stringify(newDueDate))
       };
