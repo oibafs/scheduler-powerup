@@ -27,6 +27,14 @@ var restApiCardButtonCallback = function (t) {
           title: "Choose an action",
           items: [
             {
+              text: 'Postpone card from now',
+              callback: function (t) {
+                return t.popup({
+                  title: 'Postpone card from now',
+                  url: './postpone-card-from-now.html'
+                })
+              }
+            }, {
               text: 'Postpone card',
               callback: function (t) {
                 return t.popup({
