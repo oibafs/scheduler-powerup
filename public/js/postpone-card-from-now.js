@@ -6,10 +6,11 @@ const putDueDateSuccess = (response) => {
 }
 
 // Calculate new time from now based on working hours
-const addWorkingHours = (start, priority = "Low", actionDays = "Any day") => {
+const addWorkingHours = (start, priority = "Low", actionDays = "Any day", sameDay = false) => {
   let businessHours;
   let businessDays;
   let hours;
+
   switch (actionDays) {
     case "Workdays":
       businessHours = [9, 10, 11, 13, 14, 15, 16, 17];
@@ -28,6 +29,7 @@ const addWorkingHours = (start, priority = "Low", actionDays = "Any day") => {
       businessDays = [0, 1, 2, 3, 4, 5, 6];
       break;
   };
+
   switch (priority) {
     case "Urgent":
       hours = 4;
@@ -42,7 +44,9 @@ const addWorkingHours = (start, priority = "Low", actionDays = "Any day") => {
       hours = 24;
       break;
   };
+
   let current = new Date(start);
+
   const advanceToBusinessHour = (currentTime, businessHours, businessDays) => {
     const current = new Date(currentTime);
     let hour = current.getHours();
@@ -54,11 +58,31 @@ const addWorkingHours = (start, priority = "Low", actionDays = "Any day") => {
     }
     return current;
   };
+
   current = advanceToBusinessHour(current, businessHours, businessDays);
+
   for (let i = 1; i <= hours; i++) {
     current.setTime(current.getTime() + 3600000);
     current = advanceToBusinessHour(current, businessHours, businessDays);
   }
+
+  const sameDate = (start, current) => {
+    const startDate = {};
+    const endDate = {};
+    startDate.date = start.getDate();
+    startDate.month = start.getMonth();
+    startDate.year = start.getFullYear();
+    endDate.date = current.getDate();
+    endDate.month = current.getMonth();
+    endDate.year = current.getFullYear();
+    return (startDate.date === endDate.date && startDate.month === endDate.month && startDate.year === endDate.year);
+  }
+
+  while (!sameDay && sameDate(start, current)) {
+    current.setTime(current.getTime() + 3600000);
+    current = advanceToBusinessHour(current, businessHours, businessDays);
+  }
+
   const end = new Date(current);
   return end;
 }
