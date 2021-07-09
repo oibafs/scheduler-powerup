@@ -62,6 +62,15 @@ var restApiCardButtonCallback = function (t) {
               }
             },
             {
+              text: 'Plugin data test',
+              callback: function (t) {
+                return t.popup({
+                  title: 'Plugin data test',
+                  url: './plugin-data.html'
+                })
+              }
+            },
+            {
               // You can de-authorize the REST API client with a call to .clearToken()
               text: 'Unauthorize',
               callback: function (t) {
